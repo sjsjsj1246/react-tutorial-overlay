@@ -31,15 +31,15 @@ yarn add react-tutorial-overlay
 ```
 
 ```jsx
-import { TutorialOverlay, tutorial } from '../src';
+import { TutorialOverlay, tutorial } from "../src";
 
 const App = () => {
   const handleClick = () => {
     tutorial.open([
       {
-        targetIds: ['target1'],
-        title: 'title',
-        content: 'content',
+        targetIds: ["target1"],
+        title: "title",
+        content: "content",
       },
     ]);
   };
@@ -55,7 +55,7 @@ const App = () => {
 
 ## Documentation
 
-- [Document](./document/index.md)
+- [Document](https://react-tutorial-overlay.vercel.app/docs)
 
 ## Contributing
 
