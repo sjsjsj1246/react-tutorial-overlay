@@ -1,0 +1,43 @@
+{
+  "name": "react-tutorial-overlay",
+  "description": "A headless library that makes it easy to put tutorials on top of the screen.",
+  "version": "0.1.0",
+  "author": "sjsjsj1246",
+  "repository": "sjsjsj1246/react-tutorial-overlay",
+  "license": "MIT",
+  "scripts": {
+    "main": "pnpm -F @react-tutorial-overlay/main",
+    "document": "pnpm -F @react-tutorial-overlay/document",
+    "dev": "pnpm -r dev",
+    "build": "pnpm main build",
+    "size": "size-limit"
+  },
+  "keywords": [
+    "react",
+    "tutorial"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/index.mjs",
+      "limit": "10 KB"
+    }
+  ],
+  "dependencies": {
+    "goober": "^2.1.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "size-limit": "^7.0.8"
+  }
+}
