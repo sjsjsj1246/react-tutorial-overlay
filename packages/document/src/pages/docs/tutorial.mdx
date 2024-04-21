@@ -1,0 +1,33 @@
+import Layout from '@/components/docs-layout';
+
+export default function MDXPage({ children }) {
+  return <Layout>{children}</Layout>;
+}
+
+# tutorial()
+
+When tutorial() called from anywhere, `<TutorialOverlay/>` will detect the state and bring up the tutorial
+
+## options
+
+```jsx
+import { TutorialOverlay, tutorial } from 'react-tutorial-overlay';
+
+function App() {
+  useEffect(() => {
+    tutorial.open([
+      {
+        targetIds: ['target-id'],
+        title: 'title',
+        content: '<div>content</div>',
+      },
+    ]);
+  }, []);
+
+  return (
+    <div>
+      <TutorialOverlay />
+    </div>
+  );
+}
+```

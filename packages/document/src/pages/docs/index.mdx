@@ -1,0 +1,46 @@
+import Layout from '@/components/docs-layout';
+
+export default function MDXPage({ children }) {
+  return <Layout>{children}</Layout>;
+}
+
+# GETTING STARTED
+
+### install with npm
+
+```sh
+npm install react-tutorial-overlay
+```
+
+### install with yarn
+
+```sh
+yarn add react-tutorial-overlay
+```
+
+## Basic usage
+
+```jsx
+import { TutorialOverlay, tutorial } from 'react-tutorial-overlay';
+
+const App = () => {
+  const handleClick = () => {
+    tutorial.open([
+      {
+        targetIds: ['target-id'],
+        title: 'title',
+        content: '<div>content</div>',
+      },
+    ]);
+  };
+
+  return (
+    <div>
+      <button id="target-id" onClick={handleClick}>
+        open
+      </button>
+      <TutorialOverlay />
+    </div>
+  );
+};
+```
