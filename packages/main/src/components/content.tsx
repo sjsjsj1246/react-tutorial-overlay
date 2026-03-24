@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActionType, dispatch, useTutorialStore } from '../core/store';
+import { useTutorialStore } from '../core/store';
+import { tutorial } from '../core/tutorial';
 import { styled } from 'goober';
 
 export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputElement>) => {
@@ -8,20 +9,17 @@ export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputEl
     tutorial: { steps },
   } = useTutorialStore();
   const currentStep = steps[index];
-  const { onPrevStep, onNextStep } = currentStep;
 
   const handlePrev = () => {
-    onPrevStep?.();
-    dispatch({ type: ActionType.PREV });
+    tutorial.prev();
   };
 
   const handleNext = () => {
-    onNextStep?.();
-    dispatch({ type: ActionType.NEXT });
+    tutorial.next();
   };
 
   const handleClose = () => {
-    dispatch({ type: ActionType.CLOSE });
+    tutorial.close();
   };
 
   return (
@@ -31,7 +29,7 @@ export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputEl
           <p>{currentStep.title}</p>
           <button onClick={handleClose}>건너뛰기</button>
         </InfoTitle>
-        <InfoContent dangerouslySetInnerHTML={{ __html: currentStep.content ?? '' }} />
+        <InfoContent>{currentStep.content ?? ''}</InfoContent>
       </Heander>
       <Footer className="flex items-center justify-between">
         <InfoSteps className="text-[.75rem] font-medium text-sub-2.5">
