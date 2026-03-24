@@ -345,4 +345,31 @@ describe('TutorialOverlay', () => {
 
     jest.useRealTimers();
   });
+
+  test('applies custom overlay, highlight, and info box styles from options', () => {
+    renderOverlay();
+    mockTargetRect('first-target', { left: 120, top: 96, width: 140, height: 48 });
+
+    openTutorial({
+      overlayColor: 'rgba(12, 34, 56, 0.7)',
+      highlightBorderColor: 'rgb(0, 255, 136)',
+      highlightBorderRadius: 24,
+      zIndex: 4321,
+      infoBoxWidth: '28rem',
+    });
+
+    expect(screen.getByTestId('tutorial-overlay-backdrop')).toHaveStyle({
+      backgroundColor: 'rgba(12, 34, 56, 0.7)',
+      zIndex: '4321',
+    });
+    expect(screen.getByRole('dialog', { name: 'Step 1' })).toHaveStyle({
+      width: '28rem',
+      zIndex: '4323',
+    });
+    expect(screen.getByTestId('tutorial-overlay-highlight-first-target')).toHaveStyle({
+      borderColor: 'rgb(0, 255, 136)',
+      borderRadius: '24px',
+      zIndex: '4322',
+    });
+  });
 });

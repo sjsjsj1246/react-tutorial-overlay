@@ -1,3 +1,5 @@
+export type StyleValue = number | string;
+
 export interface Step {
   targetIds: string[];
   content?: string;
@@ -7,10 +9,23 @@ export interface Step {
   onNextStep?: () => void;
 }
 
+export interface Labels {
+  prev?: string;
+  next?: string;
+  skip?: string;
+  done?: string;
+}
+
 export interface Options {
   highLightPadding?: number;
   infoBoxHeight?: number;
+  infoBoxWidth?: StyleValue;
   infoBoxMargin?: number;
+  overlayColor?: string;
+  highlightBorderColor?: string;
+  highlightBorderRadius?: StyleValue;
+  zIndex?: number;
+  labels?: Labels;
   keyboardNavigation?: boolean;
   closeOnOverlayClick?: boolean;
   onClose?: () => void;
@@ -33,5 +48,5 @@ export interface ElementStyle {
   top: number;
   width: number;
   height: number;
-  borderRadius?: number;
+  borderRadius?: StyleValue;
 }

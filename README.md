@@ -52,7 +52,18 @@ const App = () => {
       options: {
         highLightPadding: 12,
         infoBoxHeight: 220,
+        infoBoxWidth: '24rem',
         infoBoxMargin: 24,
+        overlayColor: 'rgba(15, 23, 42, 0.6)',
+        highlightBorderColor: '#22c55e',
+        highlightBorderRadius: 16,
+        zIndex: 3000,
+        labels: {
+          prev: 'Back',
+          next: 'Continue',
+          skip: 'Dismiss',
+          done: 'Finish',
+        },
         keyboardNavigation: true,
         closeOnOverlayClick: true,
         onClose: () => {
@@ -86,6 +97,10 @@ const App = () => {
 `content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
 `highLightPadding` expands the highlight frame around the target element. It defaults to `8` pixels and applies to the rendered highlight box as well as the info box anchor position.
+
+Use `overlayColor`, `highlightBorderColor`, `highlightBorderRadius`, `zIndex`, and `infoBoxWidth` to match the built-in UI to your product without changing the overlay, highlight, or info box structure. When omitted, the existing defaults remain in place.
+
+Use `labels` to override the built-in button text. The default labels are `이전`, `다음`, `건너뛰기`, and `완료`.
 
 Keyboard navigation is enabled by default while the overlay is open:
 

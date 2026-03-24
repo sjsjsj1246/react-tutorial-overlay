@@ -29,7 +29,18 @@ function App() {
         options: {
           highLightPadding: 12,
           infoBoxHeight: 220,
+          infoBoxWidth: '24rem',
           infoBoxMargin: 24,
+          overlayColor: 'rgba(15, 23, 42, 0.6)',
+          highlightBorderColor: '#22c55e',
+          highlightBorderRadius: 16,
+          zIndex: 3000,
+          labels: {
+            prev: 'Back',
+            next: 'Continue',
+            skip: 'Dismiss',
+            done: 'Finish',
+          },
           keyboardNavigation: true,
           closeOnOverlayClick: true,
         },
@@ -76,7 +87,13 @@ function App() {
 
 - `highLightPadding`: expands the highlight frame around the target in pixels. Defaults to `8`.
 - `infoBoxHeight`: sets the info box height in pixels.
+- `infoBoxWidth`: sets the info box width with a CSS length such as `360` or `'24rem'`. Defaults to `'20rem'`.
 - `infoBoxMargin`: controls the vertical gap between the target and the info box.
+- `overlayColor`: sets the backdrop color. Defaults to `rgba(0, 0, 0, 0.5)`.
+- `highlightBorderColor`: sets the highlight border color. Defaults to `#ff0000`.
+- `highlightBorderRadius`: sets the highlight border radius with a CSS length. Defaults to the current padding-based radius.
+- `zIndex`: sets the overlay stack level. Defaults to `9999`.
+- `labels`: overrides the built-in `prev`, `next`, `skip`, and `done` button labels.
 - `keyboardNavigation`: enables `Escape`, `ArrowLeft`, and `ArrowRight` shortcuts while the overlay is open. Defaults to `true`.
 - `closeOnOverlayClick`: closes the tutorial when the backdrop itself is clicked. Defaults to `false`.
 - `onClose`: runs when the tutorial is closed.
