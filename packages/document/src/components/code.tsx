@@ -111,7 +111,7 @@ export const Code: React.FC<{
           className={clsx(
             props.className,
             className,
-            'items flex h-full w-full flex-col justify-center overflow-x-auto rounded-lg p-4',
+            'flex size-full flex-col justify-center overflow-x-auto rounded-lg p-4',
           )}
           style={style}
         >
@@ -121,9 +121,9 @@ export const Code: React.FC<{
             }
 
             return (
-              <div {...getLineProps({ line, key: i })}>
+              <div key={i} {...getLineProps({ line, key: i })}>
                 {line.map((token, key) => (
-                  <span {...getTokenProps({ token, key })} />
+                  <span key={key} {...getTokenProps({ token, key })} />
                 ))}
               </div>
             );

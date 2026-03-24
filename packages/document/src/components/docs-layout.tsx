@@ -21,7 +21,7 @@ const TableHeader: React.FC<{
 
 export default function DocsLayout({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-white bg-opacity-50">
+    <div className="flex min-h-screen flex-col bg-white/50">
       <div className="mx-auto w-full max-w-4xl flex-1 px-2">
         <header className=" col-start-1 col-end-6 mb-16 mt-12 flex items-center justify-between px-2">
           <Link href="/">React Tutorial Overlay</Link>
@@ -49,7 +49,7 @@ export default function DocsLayout({ children }: { children?: React.ReactNode })
             </div>
           </nav>
 
-          <main className="prose-tutorial prose col-span-4 w-full flex-1 text-tutorial-900">{children}</main>
+          <main className="prose col-span-4 w-full flex-1 text-tutorial-900">{children}</main>
         </div>
       </div>
       <Footer />
