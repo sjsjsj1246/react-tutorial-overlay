@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage --coverageReporters=text-summary --coverageReporters=json-summary"
   },
   "husky": {
     "hooks": {

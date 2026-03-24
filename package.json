@@ -9,8 +9,8 @@
     "main": "pnpm -F @react-tutorial-overlay/main",
     "document": "pnpm -F @react-tutorial-overlay/document",
     "dev": "pnpm -r dev",
-    "size": "size-limit",
-    "build": "pnpm size-limit && pnpm main build",
+    "size": "pnpm main build && size-limit",
+    "build": "pnpm size",
     "docs": "pnpm document build"
   },
   "keywords": [
