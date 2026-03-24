@@ -13,6 +13,7 @@ A React library for step-by-step product tutorials with an imperative overlay AP
 - ✨ step-by-step tutorial overlay
 - 🎯 highlight one or more DOM targets per step
 - 🕹 imperative controls via `tutorial.open()`, `next()`, `prev()`, and `close()`
+- ⏳ await tutorial completion with a small Promise result payload
 - 📦 minimal setup with a single `<TutorialOverlay />` mount
 
 ## Get Started
@@ -33,8 +34,8 @@ yarn add react-tutorial-overlay
 import { TutorialOverlay, tutorial } from 'react-tutorial-overlay';
 
 const App = () => {
-  const handleClick = () => {
-    tutorial.open({
+  const handleClick = async () => {
+    const result = await tutorial.open({
       steps: [
         {
           targetIds: ['target1'],
@@ -59,6 +60,10 @@ const App = () => {
         },
       },
     });
+
+    if (result.reason === 'completed') {
+      console.log('continue onboarding flow');
+    }
   };
 
   return (
@@ -71,6 +76,12 @@ const App = () => {
   );
 };
 ```
+
+`tutorial.open()` returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>`:
+
+- `completed`: the user finished the last step.
+- `skipped`: the user clicked the built-in `건너뛰기` button.
+- `closed`: the tutorial was closed externally, such as `tutorial.close()`, `Escape`, backdrop click, or opening a new tutorial while another promise is still pending.
 
 `content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
@@ -87,6 +98,8 @@ Set `options.keyboardNavigation` to `false` to disable those shortcuts. Shortcut
 Set `options.closeOnOverlayClick` to `true` to close the tutorial when the dimmed backdrop itself is clicked. Clicks on the highlight frame and info box do not trigger close.
 
 The info box automatically flips and clamps itself to stay inside the viewport when the target sits close to an edge.
+
+`options.onClose` still runs whenever the tutorial closes. Use the returned Promise when you need async flow control after the tutorial ends.
 
 Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options })` from any event handler or effect.
 

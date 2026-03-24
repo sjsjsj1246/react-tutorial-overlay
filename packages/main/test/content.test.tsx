@@ -60,4 +60,29 @@ describe('Content', () => {
     expect(screen.getByText('<strong>Literal HTML</strong>')).toBeInTheDocument();
     expect(document.querySelector('strong')).toBeNull();
   });
+
+  test('skip button resolves the tutorial promise with skipped', async () => {
+    renderOverlay();
+    const onClose = jest.fn();
+
+    let resultPromise;
+
+    act(() => {
+      resultPromise = tutorial.open({
+        steps: [
+          {
+            title: 'Closable step',
+            content: 'Closable content',
+            targetIds: ['first-target'],
+          },
+        ],
+        options: { onClose },
+      });
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '건너뛰기' }));
+
+    await expect(resultPromise).resolves.toEqual({ reason: 'skipped' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

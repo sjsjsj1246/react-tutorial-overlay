@@ -91,4 +91,71 @@ describe('tutorial core API', () => {
     expect(screen.getByTestId('index')).toHaveTextContent('0');
     expect(screen.getByTestId('title')).toHaveTextContent('none');
   });
+
+  test('tutorial.open resolves with completed when the last step finishes', async () => {
+    render(<StateProbe />);
+    const onClose = jest.fn();
+
+    let resultPromise;
+
+    act(() => {
+      resultPromise = tutorial.open({
+        steps: [{ title: 'Only step', targetIds: ['only-target'] }],
+        options: { onClose },
+      });
+    });
+
+    act(() => {
+      tutorial.next();
+    });
+
+    await expect(resultPromise).resolves.toEqual({ reason: 'completed' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('tutorial.close resolves the active tutorial with closed', async () => {
+    render(<StateProbe />);
+    const onClose = jest.fn();
+
+    let resultPromise;
+
+    act(() => {
+      resultPromise = tutorial.open({
+        ...twoStepTutorial,
+        options: { onClose },
+      });
+    });
+
+    act(() => {
+      tutorial.close();
+    });
+
+    await expect(resultPromise).resolves.toEqual({ reason: 'closed' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('opening a new tutorial resolves the previous pending promise with closed', async () => {
+    render(<StateProbe />);
+
+    let firstPromise;
+    let secondPromise;
+
+    act(() => {
+      firstPromise = tutorial.open(twoStepTutorial);
+    });
+
+    act(() => {
+      secondPromise = tutorial.open({
+        steps: [{ title: 'Replacement step', targetIds: ['replacement-target'] }],
+        options: {},
+      });
+    });
+
+    act(() => {
+      tutorial.close();
+    });
+
+    await expect(firstPromise).resolves.toEqual({ reason: 'closed' });
+    await expect(secondPromise).resolves.toEqual({ reason: 'closed' });
+  });
 });
