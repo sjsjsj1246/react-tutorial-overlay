@@ -14,6 +14,35 @@ function renderOverlay() {
 }
 
 describe('Content', () => {
+  test('reads built-in button labels from options.labels', () => {
+    renderOverlay();
+
+    act(() => {
+      tutorial.open({
+        steps: [
+          { title: 'Step 1', content: 'Step 1 content', targetIds: ['first-target'] },
+          { title: 'Step 2', content: 'Step 2 content', targetIds: ['second-target'] },
+        ],
+        options: {
+          labels: {
+            prev: 'Back',
+            next: 'Continue',
+            skip: 'Dismiss',
+            done: 'Finish',
+          },
+        },
+      });
+    });
+
+    expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Finish' })).toBeInTheDocument();
+  });
+
   test('button navigation invokes each step callback once', () => {
     const onNextStep = jest.fn();
     const onPrevStep = jest.fn();

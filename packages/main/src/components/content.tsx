@@ -2,15 +2,17 @@ import React, { useId } from 'react';
 import { useTutorialStore } from '../core/store';
 import { skipTutorial, tutorial } from '../core/tutorial';
 import { styled } from 'goober';
+import { DEFAULT_INFO_BOX_WIDTH, INFO_BOX_Z_INDEX_OFFSET, getBaseZIndex, getLabels } from '../core/options';
 
 export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
   const {
     index,
-    tutorial: { steps },
+    tutorial: { steps, options },
   } = useTutorialStore();
   const currentStep = steps[index];
   const titleId = useId();
   const contentId = useId();
+  const labels = getLabels(options);
 
   const handlePrev = () => {
     tutorial.prev();
@@ -31,11 +33,15 @@ export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
       aria-labelledby={titleId}
       aria-describedby={currentStep.content ? contentId : undefined}
       tabIndex={-1}
+      style={{
+        width: options?.infoBoxWidth ?? DEFAULT_INFO_BOX_WIDTH,
+        zIndex: getBaseZIndex(options) + INFO_BOX_Z_INDEX_OFFSET,
+      }}
     >
       <Heander>
         <InfoTitle>
           <Title id={titleId}>{currentStep.title}</Title>
-          <button onClick={handleClose}>건너뛰기</button>
+          <button onClick={handleClose}>{labels.skip}</button>
         </InfoTitle>
         <InfoContent id={contentId}>{currentStep.content ?? ''}</InfoContent>
       </Heander>
@@ -44,8 +50,8 @@ export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
           <span>{`${index + 1} / ${steps.length}`}</span>
         </InfoSteps>
         <ButtonWrapper className="flex gap-[.625rem]">
-          {index !== 0 && <button onClick={handlePrev}>이전</button>}
-          <button onClick={handleNext}>{index === steps.length - 1 ? '완료' : '다음'}</button>
+          {index !== 0 && <button onClick={handlePrev}>{labels.prev}</button>}
+          <button onClick={handleNext}>{index === steps.length - 1 ? labels.done : labels.next}</button>
         </ButtonWrapper>
       </Footer>
     </Wrapper>
@@ -56,7 +62,7 @@ Content.displayName = 'Content';
 const Wrapper = styled('div', React.forwardRef)`
   position: absolute;
   top: 6.25rem;
-  z-index: 999;
+  z-index: 10001;
   width: 20rem;
   min-height: 7.5rem;
   display: flex;

@@ -4,10 +4,17 @@ import { useTutorialStore } from '../core/store';
 import { setup, styled } from 'goober';
 import { Content } from './content';
 import { tutorial } from '../core/tutorial';
+import {
+  DEFAULT_HIGHLIGHT_BORDER_COLOR,
+  DEFAULT_HIGHLIGHT_PADDING,
+  DEFAULT_OVERLAY_COLOR,
+  DEFAULT_Z_INDEX,
+  HIGHLIGHT_Z_INDEX_OFFSET,
+  getBaseZIndex,
+} from '../core/options';
 
 setup(React.createElement);
 
-const DEFAULT_HIGHLIGHT_PADDING = 8;
 const MIN_VIEWPORT_OFFSET = 10;
 const FOCUSABLE_SELECTOR = [
   'button:not([disabled])',
@@ -34,6 +41,7 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
   const wasOpen = useRef(open);
   const timeout = useRef<number | undefined>();
+  const baseZIndex = getBaseZIndex(options);
 
   function shouldIgnoreKeyboardEvent(): boolean {
     const activeElement = document.activeElement;
@@ -284,14 +292,26 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   };
 
   return open ? (
-    <Wrapper data-testid="tutorial-overlay-backdrop" onClick={handleBackdropClick}>
+    <Wrapper
+      data-testid="tutorial-overlay-backdrop"
+      onClick={handleBackdropClick}
+      style={{
+        backgroundColor: options?.overlayColor ?? DEFAULT_OVERLAY_COLOR,
+        zIndex: baseZIndex,
+      }}
+    >
       <Content ref={infoBoxElement} />
       {rectStyles.map((style) => (
         <Hightlight
           aria-hidden="true"
           data-testid={`tutorial-overlay-highlight-${style.id}`}
           key={style.id}
-          style={style}
+          style={{
+            ...style,
+            borderColor: options?.highlightBorderColor ?? DEFAULT_HIGHLIGHT_BORDER_COLOR,
+            borderRadius: options?.highlightBorderRadius ?? style.borderRadius,
+            zIndex: baseZIndex + HIGHLIGHT_Z_INDEX_OFFSET,
+          }}
         />
       ))}
     </Wrapper>
@@ -302,16 +322,16 @@ const Wrapper = styled('div')`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: ${DEFAULT_Z_INDEX};
   height: 100vh;
   width: 100vw;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${DEFAULT_OVERLAY_COLOR};
 `;
 
 const Hightlight = styled('div')`
   position: absolute;
-  z-index: 9999;
+  z-index: ${DEFAULT_Z_INDEX + HIGHLIGHT_Z_INDEX_OFFSET};
   box-sizing: border-box;
-  border: 2px solid #ff0000;
+  border: 2px solid ${DEFAULT_HIGHLIGHT_BORDER_COLOR};
   border-radius: 0.625rem;
 `;

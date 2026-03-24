@@ -28,6 +28,10 @@ Because `tutorial.open()` returns a Promise, you can keep `<TutorialOverlay />` 
 
 The highlight frame uses `options.highLightPadding` to expand around the target. If you do not provide it, the overlay uses an `8px` padding by default.
 
+Visual customization stays global for now. Use `options.overlayColor`, `options.highlightBorderColor`, `options.highlightBorderRadius`, `options.zIndex`, and `options.infoBoxWidth` when you need the built-in overlay UI to better match your product chrome.
+
+Use `options.labels` to replace the built-in `이전`, `다음`, `건너뛰기`, and `완료` button text without replacing the UI itself.
+
 By default, the mounted overlay listens for `Escape`, `ArrowLeft`, and `ArrowRight` while it is open. You can disable that with `options.keyboardNavigation = false`.
 
 Backdrop clicks are ignored by default. Set `options.closeOnOverlayClick = true` if you want clicking the dimmed overlay area to close the tutorial.
