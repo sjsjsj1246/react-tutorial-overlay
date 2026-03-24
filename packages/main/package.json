@@ -1,5 +1,6 @@
 {
   "name": "@react-tutorial-overlay/main",
+  "private": true,
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
