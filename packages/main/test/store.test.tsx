@@ -43,4 +43,24 @@ describe('store step callbacks', () => {
     expect(onPrevStep).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('title')).toHaveTextContent('Step 1');
   });
+
+  test('tutorial.prev does not invoke onPrevStep when already on the first step', () => {
+    const onPrevStep = jest.fn();
+
+    render(<StateProbe />);
+
+    act(() => {
+      tutorial.open({
+        steps: [{ title: 'Step 1', targetIds: ['first-target'], onPrevStep }],
+        options: {},
+      });
+    });
+
+    act(() => {
+      tutorial.prev();
+    });
+
+    expect(onPrevStep).not.toHaveBeenCalled();
+    expect(screen.getByTestId('title')).toHaveTextContent('Step 1');
+  });
 });
