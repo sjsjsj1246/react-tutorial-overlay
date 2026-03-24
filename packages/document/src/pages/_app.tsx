@@ -18,7 +18,7 @@ const components: MDXComponents = {
     props.className ? (
       <Code className={props.className} snippet={props.children as string} />
     ) : (
-      <code className="my-0.5 rounded bg-tutorial-300 bg-opacity-40 px-1 py-1" {...props} />
+      <code className="my-0.5 rounded bg-tutorial-300/40 p-1" {...props} />
     ),
 };
 

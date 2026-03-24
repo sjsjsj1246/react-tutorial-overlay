@@ -29,18 +29,18 @@ export default function Home() {
         description="A headless library that makes it easy to put tutorials on top of the screen."
       />
       <div className="container prose mx-auto flex flex-col items-center justify-center">
-        <h1 className="my-[5rem]">React Tutorial Overlay</h1>
+        <h1 className="my-20">React Tutorial Overlay</h1>
         <div className="flex gap-4">
           <button
             id="button-open"
             onClick={handleClick}
-            className="rounded-md bg-tutorial-600 px-[1rem] py-[0.5rem] text-tutorial-50"
+            className="rounded-md bg-tutorial-600 px-4 py-2 text-tutorial-50"
           >
             Start tutorial
           </button>
           <button
             id="button-docs"
-            className="rounded-md bg-tutorial-600 px-[1rem] py-[0.5rem] text-tutorial-50"
+            className="rounded-md bg-tutorial-600 px-4 py-2 text-tutorial-50"
             onClick={() => router.push('/docs')}
           >
             Documentation
