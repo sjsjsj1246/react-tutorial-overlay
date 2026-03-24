@@ -25,13 +25,20 @@ import { TutorialOverlay, tutorial } from 'react-tutorial-overlay';
 
 const App = () => {
   const handleClick = () => {
-    tutorial.open([
-      {
-        targetIds: ['target-id'],
-        title: 'title',
-        content: '<div>content</div>',
+    tutorial.open({
+      steps: [
+        {
+          targetIds: ['target-id'],
+          title: 'Welcome',
+          content: 'This content is rendered as plain text.',
+        },
+      ],
+      options: {
+        onClose: () => {
+          console.log('tutorial closed');
+        },
       },
-    ]);
+    });
   };
 
   return (
@@ -44,3 +51,7 @@ const App = () => {
   );
 };
 ```
+
+Mount `<TutorialOverlay />` once in your app. Then call `tutorial.open({ steps, options })` from any button handler or effect.
+
+`content` accepts a string. HTML inside that string is shown as text rather than injected into the page.

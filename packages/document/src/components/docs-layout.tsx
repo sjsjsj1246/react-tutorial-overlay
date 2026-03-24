@@ -25,7 +25,7 @@ export default function DocsLayout({ children }: { children?: React.ReactNode })
       <div className="mx-auto w-full max-w-4xl flex-1 px-2">
         <header className=" col-start-1 col-end-6 mb-16 mt-12 flex items-center justify-between px-2">
           <Link href="/">React Tutorial Overlay</Link>
-          <a className="flex text-tutorial-600 underline" href="https://github.com/sjsjsj1246/react-turotial-overlay">
+          <a className="flex text-tutorial-600 underline" href="https://github.com/sjsjsj1246/react-tutorial-overlay">
             GitHub
           </a>
         </header>
@@ -39,13 +39,6 @@ export default function DocsLayout({ children }: { children?: React.ReactNode })
               <TableHeader>API</TableHeader>
               <TableItem href="/docs/tutorial">tutorial()</TableItem>
               <TableItem href="/docs/tutorial-overlay">TutorialOverlay</TableItem>
-
-              <TableHeader>Guides</TableHeader>
-              <TableItem href="/docs/styling">Styling</TableItem>
-              <TableItem href="/docs/customizing">Customizing</TableItem>
-
-              <TableHeader>Releases</TableHeader>
-              <TableItem href="/docs/version-1">Version 1</TableItem>
             </div>
           </nav>
 
