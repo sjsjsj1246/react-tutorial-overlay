@@ -19,6 +19,7 @@
 - 완료: `codex/add-keyboard-and-close-controls` 병합 완료
 - 완료: `codex/add-highlight-padding-and-overlay-click-behavior` 병합 완료
 - 완료: `codex/add-promise-api` 병합 완료
+- 완료: `codex/improve-accessibility` 병합 완료
 - 반영된 내용:
   - `packages/main/test/setup.ts` 추가
   - `packages/main/jest.config.js` 정상화
@@ -48,6 +49,11 @@
   - 새 tutorial open 시 이전 pending promise를 `closed`로 정리하도록 보정
   - Promise API와 `onClose`의 역할을 분리하고 기존 callback 계약 유지
   - README 및 docs에 async / await 사용 예제 추가
+  - info box를 labeled `dialog`로 노출하고 title/content를 `aria-labelledby` / `aria-describedby`로 연결
+  - overlay open 시 info box의 첫 built-in control로 focus 이동 추가
+  - overlay close 시 open 직전 활성 요소로 focus 복원 추가
+  - dialog semantics, focus on open, focus restore on close, dialog 내부 keyboard navigation 회귀 테스트 추가
+  - README 및 docs에 현재 접근성 동작과 focus trap 미지원 범위 명시
 - 현재 기준선:
   - `pnpm -C packages/main test` 통과
   - `pnpm -C packages/main test:coverage` 통과
@@ -74,6 +80,8 @@
 ## Next Product Work Candidates
 
 첫 기능 확장 작업으로 권장했던 `codex/add-keyboard-and-close-controls`, `codex/add-highlight-padding-and-overlay-click-behavior`, `codex/add-promise-api`는 모두 완료 및 병합됐다.
+
+후속 접근성 안정화 작업으로 권장했던 `codex/improve-accessibility`도 완료 및 병합됐다. 현재 overlay는 dialog semantics와 open/close focus lifecycle까지는 안정화됐고, focus trap과 background inert는 다음 접근성 확장 후보로 남겨둔다.
 
 이 문서는 현재까지 반영된 후속 기능 이력을 남기는 참고 문서로 유지한다. 다음 신규 기능 후보는 별도 계획 문서에서 다시 우선순위를 잡는 편이 맞다.
 
