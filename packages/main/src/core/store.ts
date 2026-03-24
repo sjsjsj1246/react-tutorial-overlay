@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { Step, Tutorial } from './types';
+import type { Step, Tutorial, TutorialResult, TutorialResultReason } from './types';
 
 export enum ActionType {
   OPEN,
@@ -11,7 +11,7 @@ export enum ActionType {
 
 type Action =
   | { type: ActionType.OPEN; payload: State }
-  | { type: ActionType.CLOSE }
+  | { type: ActionType.CLOSE; payload: { reason: TutorialResultReason } }
   | { type: ActionType.NEXT }
   | { type: ActionType.PREV }
   | { type: ActionType.UPDATE; payload: { index: number; step: Step } };
@@ -31,17 +31,30 @@ const initialState: State = {
   },
 };
 
+let pendingTutorialResolver: ((result: TutorialResult) => void) | null = null;
+
+function settlePendingTutorial(result: TutorialResult) {
+  if (!pendingTutorialResolver) {
+    return;
+  }
+
+  const resolve = pendingTutorialResolver;
+  pendingTutorialResolver = null;
+  resolve(result);
+}
+
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case ActionType.OPEN:
       return action.payload;
     case ActionType.CLOSE:
+      settlePendingTutorial({ reason: action.payload.reason });
       state.tutorial.options?.onClose?.();
       return initialState;
     case ActionType.NEXT:
       state.tutorial.steps[state.index]?.onNextStep?.();
       if (state.index === state.tutorial.steps.length - 1) {
-        return reducer(state, { type: ActionType.CLOSE });
+        return reducer(state, { type: ActionType.CLOSE, payload: { reason: 'completed' } });
       } else {
         return {
           ...state,
@@ -81,6 +94,15 @@ export const dispatch = (action: Action) => {
     listener(memoryState);
   });
 };
+
+export const getState = (): State => memoryState;
+
+export const hasPendingTutorialResult = (): boolean => pendingTutorialResolver !== null;
+
+export const createPendingTutorialResult = (): Promise<TutorialResult> =>
+  new Promise((resolve) => {
+    pendingTutorialResolver = resolve;
+  });
 
 export const useTutorialStore = (): State => {
   const [state, setState] = useState<State>(memoryState);

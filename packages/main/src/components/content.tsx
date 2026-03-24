@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTutorialStore } from '../core/store';
-import { tutorial } from '../core/tutorial';
+import { skipTutorial, tutorial } from '../core/tutorial';
 import { styled } from 'goober';
 
 export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputElement>) => {
@@ -19,7 +19,7 @@ export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputEl
   };
 
   const handleClose = () => {
-    tutorial.close();
+    skipTutorial();
   };
 
   return (

@@ -24,6 +24,8 @@ function App() {
 
 `TutorialOverlay` does not need props for the current public API. Configure behavior through `tutorial.open({ steps, options })`.
 
+Because `tutorial.open()` returns a Promise, you can keep `<TutorialOverlay />` mounted once and await tutorial completion from any handler or effect that triggers the open call.
+
 The highlight frame uses `options.highLightPadding` to expand around the target. If you do not provide it, the overlay uses an `8px` padding by default.
 
 By default, the mounted overlay listens for `Escape`, `ArrowLeft`, and `ArrowRight` while it is open. You can disable that with `options.keyboardNavigation = false`.
