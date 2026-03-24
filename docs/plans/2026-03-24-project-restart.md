@@ -15,7 +15,8 @@
 - 완료: `codex/restore-main-tests` 병합 완료
 - 완료: `codex/fix-runtime-contract` 병합 완료
 - 완료: `codex/fix-docs-lint` 병합 완료
-- 완료: `codex/align-readme-and-docs` 구현 및 PR 준비 완료
+- 완료: `codex/align-readme-and-docs` 병합 완료
+- 완료: `codex/add-keyboard-and-close-controls` 병합 완료
 - 반영된 내용:
   - `packages/main/test/setup.ts` 추가
   - `packages/main/jest.config.js` 정상화
@@ -35,6 +36,11 @@
   - README, docs landing page, docs sidebar, MDX 예제를 현재 공개 API 기준으로 재정렬
   - 존재하지 않는 docs sidebar 링크 제거
   - 잘못된 GitHub 저장소 링크 수정
+  - `Options.keyboardNavigation`, `Options.closeOnOverlayClick` 추가
+  - overlay open 상태에서만 `Escape`, `ArrowLeft`, `ArrowRight` 단축키 처리 추가
+  - `input` / `textarea` / `select` / `contenteditable` 포커스 중 단축키 무시 처리 추가
+  - backdrop click close를 opt-in 동작으로 추가하고 highlight / info box 클릭과 구분
+  - keyboard / overlay close 관련 README 및 docs 예제 업데이트
 - 현재 기준선:
   - `pnpm -C packages/main test` 통과
   - `pnpm -C packages/main test:coverage` 통과
@@ -56,7 +62,27 @@
 
 ## Restart Work Summary
 
-재시동 계획에 포함된 4개 워크트리 기준 작업은 모두 구현 가능 상태까지 정리됐다. 남은 일은 `codex/align-readme-and-docs` PR 병합과, 병합 후 메인 브랜치 기준 최종 검증 및 릴리즈 판단이다.
+재시동 계획에 포함된 4개 워크트리 기준 작업은 모두 완료되어 `main` 기준선에 반영됐다. 이 문서는 이제 “복구 작업 체크리스트” 역할은 끝났고, 다음 단계인 기능 확장 후보를 정리하는 참고 문서로 유지한다.
+
+## Next Product Work Candidates
+
+첫 기능 확장 작업으로 권장했던 `codex/add-keyboard-and-close-controls`는 완료 및 병합됐다.
+
+다음으로 바로 붙이기 좋은 기능 후보는 아래 2개다.
+
+1. `codex/add-highlight-padding-and-overlay-click-behavior`
+2. `codex/add-promise-api`
+
+이제 추천 시작점은 `codex/add-highlight-padding-and-overlay-click-behavior`다.
+
+- `Options.highLightPadding`가 타입에는 있지만 실제 highlight 계산에는 반영되지 않는다.
+- overlay 클릭 시 닫을지 여부, highlight 영역 바깥 상호작용을 어떻게 막을지 같은 핵심 UX 정책이 아직 없다.
+
+그 다음 우선순위는 Promise API다.
+
+- README에 예고만 있었고 아직 실제 API가 없다.
+- `tutorial.open()`이 완료 시점을 resolve하는 Promise를 반환하면 튜토리얼 종료 후 후속 로직 연결이 쉬워진다.
+- 다만 상태 계약을 한 번 더 설계해야 해서 앞의 두 작업보다 약간 무겁다.
 
 ## Common Setup For Every Worktree
 
@@ -190,7 +216,7 @@ Expected:
 
 **Suggested worktree:** `codex/align-readme-and-docs`
 
-**Status:** 구현 완료, PR 대기
+**Status:** 완료 및 병합됨
 
 **Goal:** 현재 구현과 어긋난 README, dead link, 잘못된 GitHub 링크, 미완성 문서 네비게이션을 정리해서 외부 사용자가 헷갈리지 않게 만든다.
 
@@ -263,3 +289,88 @@ Expected:
 - `README.md` 예제 코드가 실제 공개 타입과 일치하는지 다시 확인
 - `dist/` 산출물이 필요 이상으로 커밋되지 않는지 확인
 - 변경 로그가 필요하면 `CHANGELOG.md` 또는 release note 초안 작성
+
+---
+
+## Suggested Next Feature Plan
+
+첫 번째 후속 기능 작업으로 권장했던 `codex/add-keyboard-and-close-controls`는 완료 및 병합됐다. 이제 다음 추천 작업은 `codex/add-highlight-padding-and-overlay-click-behavior`다.
+
+### Candidate A: Add Keyboard And Close Controls
+
+**Suggested worktree:** `codex/add-keyboard-and-close-controls`
+
+**Status:** 완료 및 병합됨
+
+**Goal:** 키보드와 닫기 동작을 옵션화해서 기본 사용성과 접근성을 개선한다.
+
+**Why this first:**
+- 구현 난이도가 낮고 효과가 바로 보인다.
+- 기존 store / overlay / test 구조를 그대로 활용할 수 있다.
+- 문서화도 단순하다.
+
+**Proposed scope:**
+- `Escape`로 튜토리얼 닫기
+- `ArrowRight`로 다음 step
+- `ArrowLeft`로 이전 step
+- 옵션으로 키보드 제어 활성화/비활성화
+- 옵션으로 overlay click close 활성화/비활성화
+
+**Files likely involved:**
+- Modify: `packages/main/src/core/types.ts`
+- Modify: `packages/main/src/components/tutorial-overlay.tsx`
+- Modify: `packages/main/src/core/store.ts`
+- Test: `packages/main/test/tutorial-overlay.test.tsx`
+- Modify: `README.md`
+- Modify: `packages/document/src/pages/docs/tutorial.mdx`
+- Modify: `packages/document/src/pages/docs/tutorial-overlay.mdx`
+
+**Acceptance criteria:**
+- 옵션이 켜져 있을 때 `Escape`, `ArrowLeft`, `ArrowRight`가 기대대로 동작한다.
+- 옵션이 꺼져 있으면 기존 버튼 기반 동작만 유지된다.
+- overlay click close 동작이 옵션으로 제어된다.
+- 관련 테스트와 문서가 추가된다.
+
+**Result:**
+- `Options`에 `keyboardNavigation`, `closeOnOverlayClick` 옵션 추가
+- overlay가 열려 있을 때만 `Escape`, `ArrowLeft`, `ArrowRight` 전역 keydown 처리 추가
+- 첫 step에서 `ArrowLeft`는 no-op이고, 마지막 step에서 `ArrowRight`는 기존 완료 동작을 유지
+- `input` / `textarea` / `select` / `contenteditable` 포커스 중 단축키를 무시하도록 보정
+- backdrop click close를 opt-in으로 추가하고 highlight / info box 클릭은 close와 분리
+- `packages/main/test/tutorial-overlay.test.tsx`에 keyboard / backdrop click close 회귀 테스트 추가
+- README 및 docs 예제를 새 옵션 계약과 맞게 업데이트
+- `pnpm -C packages/main test`, `pnpm -C packages/document build`, `pnpm build` 통과
+
+### Candidate B: Add Highlight Padding And Overlay Behavior
+
+**Suggested worktree:** `codex/add-highlight-padding-and-overlay-click-behavior`
+
+**Status:** 다음 추천 작업
+
+**Goal:** 이미 타입에 존재하는 `highLightPadding`를 실제 위치 계산에 반영하고 overlay UX를 다듬는다.
+
+**Why this next:**
+- 현재 옵션 타입과 실제 동작이 어긋나 있다.
+- highlight 박스가 target element에 너무 딱 붙어 보이는 문제를 해결할 수 있다.
+
+**Proposed scope:**
+- `highLightPadding`를 rect 계산에 반영
+- viewport 경계에서 info box 위치 보정
+- 필요하면 highlight border radius와 padding 동기화
+
+### Candidate C: Add Promise API
+
+**Suggested worktree:** `codex/add-promise-api`
+
+**Status:** 후속 후보
+
+**Goal:** 튜토리얼 완료/취소 시점을 소비자가 await할 수 있도록 Promise 기반 API를 추가한다.
+
+**Why later:**
+- 가장 제품 가치가 크지만 상태 전이와 close reason 설계가 필요하다.
+- `tutorial.open()` 반환형 변경과 문서화가 뒤따른다.
+
+**Proposed scope:**
+- `tutorial.open()`이 Promise를 반환
+- 완료 / 건너뛰기 / 강제 종료를 구분하는 resolve payload 정의
+- docs와 examples에 async usage 추가
