@@ -123,6 +123,17 @@ Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutori
 ## Documentation
 
 - [Docs](https://react-tutorial-overlay.vercel.app/docs)
+- [Release Guide](./docs/releasing.md)
+
+## Releasing
+
+This repo uses Changesets for versioning and changelog generation.
+
+```bash
+pnpm changeset
+```
+
+Add a changeset in feature PRs when the published package should change. After merge to `main`, the Release workflow opens or updates a version PR. Merging that PR updates `CHANGELOG.md` and publishes the next npm version.
 
 ## Contributing
 
