@@ -345,7 +345,7 @@ Expected:
 
 **Suggested worktree:** `codex/add-highlight-padding-and-overlay-click-behavior`
 
-**Status:** 다음 추천 작업
+**Status:** 완료 및 병합됨
 
 **Goal:** 이미 타입에 존재하는 `highLightPadding`를 실제 위치 계산에 반영하고 overlay UX를 다듬는다.
 
@@ -358,11 +358,33 @@ Expected:
 - viewport 경계에서 info box 위치 보정
 - 필요하면 highlight border radius와 padding 동기화
 
+**Files likely involved:**
+- Modify: `packages/main/src/core/types.ts`
+- Modify: `packages/main/src/components/tutorial-overlay.tsx`
+- Test: `packages/main/test/tutorial-overlay.test.tsx`
+- Modify: `README.md`
+- Modify: `packages/document/src/pages/docs/tutorial.mdx`
+- Modify: `packages/document/src/pages/docs/tutorial-overlay.mdx`
+
+**Acceptance criteria:**
+- `highLightPadding`가 기본값과 사용자 지정 값 모두에서 highlight rect에 반영된다.
+- info box가 viewport 가장자리 근처에서도 잘리지 않게 보정된다.
+- padding 적용 후 highlight 시각 스타일과 info box 배치가 기존 UX를 크게 해치지 않는다.
+- 관련 테스트와 문서가 현재 동작과 일치한다.
+
+**Result:**
+- `Options.highLightPadding` 기본값을 `8`로 두고 highlight rect 계산에 실제 반영
+- highlight frame을 `box-sizing: border-box` 기준으로 정리하고 padding 크기에 맞춰 border radius를 동기화
+- 첫 번째 유효 target 기준으로 info box anchor를 잡고 viewport 좌우/상하 경계 안으로 위치 보정
+- `packages/main/test/tutorial-overlay.test.tsx`에 default/custom padding, viewport clamp 회귀 테스트 추가
+- README 및 docs 예제를 `highLightPadding`과 info box 재배치 동작 설명에 맞게 업데이트
+- `pnpm -C packages/main test`, `pnpm -F @react-tutorial-overlay/document build`, `pnpm build` 통과
+
 ### Candidate C: Add Promise API
 
 **Suggested worktree:** `codex/add-promise-api`
 
-**Status:** 후속 후보
+**Status:** 다음 추천 작업
 
 **Goal:** 튜토리얼 완료/취소 시점을 소비자가 await할 수 있도록 Promise 기반 API를 추가한다.
 
