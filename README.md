@@ -2,7 +2,7 @@
 
 <h1>React Tutorial Overlay</h1>
 
-A headless library that makes it easy to put tutorials on top of the screen.
+A React library for step-by-step product tutorials with an imperative overlay API.
 
 (This is an open source library that is still under development.)
 
@@ -11,10 +11,9 @@ A headless library that makes it easy to put tutorials on top of the screen.
 ## Features
 
 - ✨ step-by-step tutorial overlay
-- 🎨 easily customizable
-- 🤝 Pomise API (Coming Soon)
-- 🚀 Lightweight (Coming Soon)
-- 👻 Headless (Coming Soon)
+- 🎯 highlight one or more DOM targets per step
+- 🕹 imperative controls via `tutorial.open()`, `next()`, `prev()`, and `close()`
+- 📦 minimal setup with a single `<TutorialOverlay />` mount
 
 ## Get Started
 
@@ -39,11 +38,23 @@ const App = () => {
       steps: [
         {
           targetIds: ['target1'],
-          title: 'title',
-          content: 'content',
+          title: 'Welcome',
+          content: 'Click next to move through the tutorial.',
+        },
+        {
+          targetIds: ['target2'],
+          title: 'Second step',
+          content: 'Each step can highlight one or more element ids.',
+          infoBoxAlignment: 'right',
         },
       ],
-      options: {},
+      options: {
+        infoBoxHeight: 220,
+        infoBoxMargin: 24,
+        onClose: () => {
+          console.log('tutorial closed');
+        },
+      },
     });
   };
 
@@ -51,6 +62,7 @@ const App = () => {
     <div>
       <button onClick={handleClick}>open</button>
       <div id="target1">target</div>
+      <div id="target2">another target</div>
       <TutorialOverlay />
     </div>
   );
@@ -59,10 +71,12 @@ const App = () => {
 
 `content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
+Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options })` from any event handler or effect.
+
 ## Documentation
 
-- [Document](https://react-tutorial-overlay.vercel.app/docs)
+- [Docs](https://react-tutorial-overlay.vercel.app/docs)
 
 ## Contributing
 
-@sjsjsj1246
+[@sjsjsj1246](https://github.com/sjsjsj1246)

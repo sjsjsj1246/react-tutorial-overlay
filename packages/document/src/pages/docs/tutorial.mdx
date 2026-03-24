@@ -6,22 +6,30 @@ export default function MDXPage({ children }) {
 
 # tutorial()
 
-When tutorial() called from anywhere, `<TutorialOverlay/>` will detect the state and bring up the tutorial
+The exported `tutorial` object lets you open, advance, rewind, close, and update the active tutorial from anywhere in your app.
 
-## options
+## Open a tutorial
 
 ```jsx
+import { useEffect } from 'react';
 import { TutorialOverlay, tutorial } from 'react-tutorial-overlay';
 
 function App() {
   useEffect(() => {
-    tutorial.open([
-      {
-        targetIds: ['target-id'],
-        title: 'title',
-        content: '<div>content</div>',
+    tutorial.open({
+      steps: [
+        {
+          targetIds: ['target-id'],
+          title: 'Welcome',
+          content: 'This message is plain text.',
+          infoBoxAlignment: 'center',
+        },
+      ],
+      options: {
+        infoBoxHeight: 220,
+        infoBoxMargin: 24,
       },
-    ]);
+    });
   }, []);
 
   return (
@@ -31,3 +39,26 @@ function App() {
   );
 }
 ```
+
+## Available methods
+
+- `tutorial.open({ steps, options })`: opens a tutorial and starts at the first step by default.
+- `tutorial.next()`: moves to the next step and closes the overlay after the last step.
+- `tutorial.prev()`: moves back one step when possible.
+- `tutorial.close()`: closes the overlay and runs `options.onClose` if provided.
+- `tutorial.update(index, step)`: replaces a step definition while the tutorial is active.
+
+## Step fields
+
+- `targetIds`: array of element ids to highlight for the current step.
+- `title`: optional heading shown in the info box.
+- `content`: optional plain text body.
+- `infoBoxAlignment`: optional `center`, `left`, or `right`.
+- `onPrevStep`: optional callback that runs when leaving the step with `tutorial.prev()`.
+- `onNextStep`: optional callback that runs when leaving the step with `tutorial.next()`.
+
+## Tutorial options
+
+- `infoBoxHeight`: sets the info box height in pixels.
+- `infoBoxMargin`: controls the vertical gap between the target and the info box.
+- `onClose`: runs when the tutorial is closed.

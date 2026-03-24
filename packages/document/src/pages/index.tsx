@@ -12,11 +12,12 @@ export default function Home() {
         {
           targetIds: ['button-open'],
           title: 'Welcome to the tutorial!',
-          content: '<div>hi</div>',
+          content: 'Start an overlay by calling tutorial.open({ steps, options }).',
         },
         {
           targetIds: ['button-docs'],
-          title: 'Check out the docs!',
+          title: 'Read the docs',
+          content: 'Mount TutorialOverlay once, then drive the flow with the tutorial API.',
         },
       ],
     });
@@ -26,10 +27,14 @@ export default function Home() {
     <main className="overflow-x-hidden">
       <NextSeo
         title={'react-tutorial-overlay'}
-        description="A headless library that makes it easy to put tutorials on top of the screen."
+        description="A React library for step-by-step product tutorials with an imperative overlay API."
       />
       <div className="container prose mx-auto flex flex-col items-center justify-center">
         <h1 className="my-20">React Tutorial Overlay</h1>
+        <p className="mb-8 text-center text-tutorial-700">
+          Mount <code>{'<TutorialOverlay />'}</code> once and open guided flows with{' '}
+          <code>{'tutorial.open({ steps, options })'}</code>.
+        </p>
         <div className="flex gap-4">
           <button
             id="button-open"

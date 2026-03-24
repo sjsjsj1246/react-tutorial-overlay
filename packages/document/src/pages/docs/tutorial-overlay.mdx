@@ -6,7 +6,9 @@ export default function MDXPage({ children }) {
 
 # TutorialOverlay
 
-## options
+Render `<TutorialOverlay />` once in your app so it can subscribe to the tutorial store and display the active step UI.
+
+## Usage
 
 ```jsx
 import { TutorialOverlay } from 'react-tutorial-overlay';
@@ -19,3 +21,5 @@ function App() {
   );
 }
 ```
+
+`TutorialOverlay` does not need props for the current public API. Configure behavior through `tutorial.open({ steps, options })`.
