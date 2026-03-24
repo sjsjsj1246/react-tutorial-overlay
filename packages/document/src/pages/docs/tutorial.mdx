@@ -83,4 +83,5 @@ function App() {
 
 Keyboard shortcuts are ignored while an `input`, `textarea`, `select`, or `contenteditable` element has focus.
 The info box automatically repositions itself to stay within the viewport when the target is close to an edge.
+When a tutorial opens, focus moves into the labeled dialog UI and returns to the previously active element after close. The current overlay does not trap focus.
 `onClose` remains available for side effects, while the Promise returned by `tutorial.open()` is the async completion hook.

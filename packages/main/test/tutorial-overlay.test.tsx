@@ -105,6 +105,43 @@ describe('TutorialOverlay', () => {
     expect(screen.queryByText('Step 1 content')).not.toBeInTheDocument();
   });
 
+  test('exposes the info box as a labeled dialog', () => {
+    renderOverlay();
+    openTutorial();
+
+    const dialog = screen.getByRole('dialog', { name: 'Step 1' });
+
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).toHaveAccessibleDescription('Step 1 content');
+  });
+
+  test('moves focus into the dialog when the tutorial opens', () => {
+    renderOverlay();
+
+    const input = screen.getByLabelText('Page input');
+    input.focus();
+
+    openTutorial();
+
+    expect(screen.getByRole('button', { name: '건너뛰기' })).toHaveFocus();
+  });
+
+  test('restores focus to the previously active element when the tutorial closes', () => {
+    const onClose = jest.fn();
+
+    renderOverlay();
+
+    const input = screen.getByLabelText('Page input');
+    input.focus();
+
+    openTutorial({ onClose });
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(input).toHaveFocus();
+  });
+
   test('keeps first step on ArrowLeft and closes after ArrowRight on the last step', () => {
     const onClose = jest.fn();
 
@@ -133,6 +170,18 @@ describe('TutorialOverlay', () => {
 
     expect(screen.getByText('Step 1 content')).toBeInTheDocument();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  test('keeps keyboard navigation working while focus is on a dialog button', () => {
+    renderOverlay();
+    openTutorial();
+
+    const skipButton = screen.getByRole('button', { name: '건너뛰기' });
+    expect(skipButton).toHaveFocus();
+
+    fireEvent.keyDown(skipButton, { key: 'ArrowRight' });
+
+    expect(screen.getByText('Step 2 content')).toBeInTheDocument();
   });
 
   test('ignores keyboard shortcuts while a text input has focus', () => {

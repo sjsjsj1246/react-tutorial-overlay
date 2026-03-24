@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { useTutorialStore } from '../core/store';
 import { skipTutorial, tutorial } from '../core/tutorial';
 import { styled } from 'goober';
 
-export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputElement>) => {
+export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
   const {
     index,
     tutorial: { steps },
   } = useTutorialStore();
   const currentStep = steps[index];
+  const titleId = useId();
+  const contentId = useId();
 
   const handlePrev = () => {
     tutorial.prev();
@@ -23,13 +25,19 @@ export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputEl
   };
 
   return (
-    <Wrapper ref={ref}>
+    <Wrapper
+      ref={ref}
+      role="dialog"
+      aria-labelledby={titleId}
+      aria-describedby={currentStep.content ? contentId : undefined}
+      tabIndex={-1}
+    >
       <Heander>
         <InfoTitle>
-          <p>{currentStep.title}</p>
+          <Title id={titleId}>{currentStep.title}</Title>
           <button onClick={handleClose}>건너뛰기</button>
         </InfoTitle>
-        <InfoContent>{currentStep.content ?? ''}</InfoContent>
+        <InfoContent id={contentId}>{currentStep.content ?? ''}</InfoContent>
       </Heander>
       <Footer className="flex items-center justify-between">
         <InfoSteps className="text-[.75rem] font-medium text-sub-2.5">
@@ -43,6 +51,7 @@ export const Content = React.forwardRef((_, ref?: React.ForwardedRef<HTMLInputEl
     </Wrapper>
   );
 });
+Content.displayName = 'Content';
 
 const Wrapper = styled('div', React.forwardRef)`
   position: absolute;
@@ -64,15 +73,16 @@ const Heander = styled('div')`
   flex: 1;
 `;
 
+const Title = styled('h2')`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin: 0;
+`;
+
 const InfoTitle = styled('div')`
   display: flex;
   align-items: center;
-
-  p {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f1f1f;
-  }
 
   button {
     font-size: 0.75rem;

@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { ElementStyle, Options } from '../core/types';
 import { useTutorialStore } from '../core/store';
 import { setup, styled } from 'goober';
@@ -9,6 +9,14 @@ setup(React.createElement);
 
 const DEFAULT_HIGHLIGHT_PADDING = 8;
 const MIN_VIEWPORT_OFFSET = 10;
+const FOCUSABLE_SELECTOR = [
+  'button:not([disabled])',
+  '[href]',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"]):not([disabled])',
+].join(', ');
 
 interface TutorialOverlayProps {
   options?: Options;
@@ -23,6 +31,8 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   const [rectStyles, setRectStyles] = useState<ElementStyle[]>([]);
   const currentElements = useRef<{ id: string; element: HTMLElement; initialColor: string }[]>([]);
   const infoBoxElement = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
+  const wasOpen = useRef(open);
   const timeout = useRef<number | undefined>();
 
   function shouldIgnoreKeyboardEvent(): boolean {
@@ -193,6 +203,32 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   }, [steps, index]);
 
   useEffect(() => {
+    if (open && !wasOpen.current) {
+      const activeElement = document.activeElement;
+
+      previouslyFocusedElement.current =
+        activeElement instanceof HTMLElement && activeElement !== document.body ? activeElement : null;
+
+      const dialog = infoBoxElement.current;
+      if (dialog) {
+        const focusTarget = dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? dialog;
+        focusTarget.focus();
+      }
+    }
+
+    if (!open && wasOpen.current) {
+      const focusTarget = previouslyFocusedElement.current;
+      previouslyFocusedElement.current = null;
+
+      if (focusTarget && focusTarget.isConnected) {
+        focusTarget.focus();
+      }
+    }
+
+    wasOpen.current = open;
+  }, [open]);
+
+  useEffect(() => {
     if (!open || options?.keyboardNavigation === false) {
       return;
     }
@@ -249,9 +285,10 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
 
   return open ? (
     <Wrapper data-testid="tutorial-overlay-backdrop" onClick={handleBackdropClick}>
-      <Content ref={infoBoxElement as RefObject<HTMLInputElement>} />
+      <Content ref={infoBoxElement} />
       {rectStyles.map((style) => (
         <Hightlight
+          aria-hidden="true"
           data-testid={`tutorial-overlay-highlight-${style.id}`}
           key={style.id}
           style={style}

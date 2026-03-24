@@ -33,3 +33,5 @@ By default, the mounted overlay listens for `Escape`, `ArrowLeft`, and `ArrowRig
 Backdrop clicks are ignored by default. Set `options.closeOnOverlayClick = true` if you want clicking the dimmed overlay area to close the tutorial.
 
 The info box automatically flips and clamps itself to stay visible when the highlighted target sits near the viewport edges.
+
+For accessibility, the info box is rendered as a labeled `dialog`. Opening the tutorial moves focus into the dialog controls, and closing restores focus to the element that was active before `tutorial.open()`. The current overlay does not trap focus inside the dialog.
