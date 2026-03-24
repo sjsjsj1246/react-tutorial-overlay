@@ -11,6 +11,8 @@ export interface Options {
   highLightPadding?: number;
   infoBoxHeight?: number;
   infoBoxMargin?: number;
+  keyboardNavigation?: boolean;
+  closeOnOverlayClick?: boolean;
   onClose?: () => void;
 }
 
