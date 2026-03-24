@@ -28,6 +28,8 @@ function App() {
       options: {
         infoBoxHeight: 220,
         infoBoxMargin: 24,
+        keyboardNavigation: true,
+        closeOnOverlayClick: true,
       },
     });
   }, []);
@@ -61,4 +63,8 @@ function App() {
 
 - `infoBoxHeight`: sets the info box height in pixels.
 - `infoBoxMargin`: controls the vertical gap between the target and the info box.
+- `keyboardNavigation`: enables `Escape`, `ArrowLeft`, and `ArrowRight` shortcuts while the overlay is open. Defaults to `true`.
+- `closeOnOverlayClick`: closes the tutorial when the backdrop itself is clicked. Defaults to `false`.
 - `onClose`: runs when the tutorial is closed.
+
+Keyboard shortcuts are ignored while an `input`, `textarea`, `select`, or `contenteditable` element has focus.

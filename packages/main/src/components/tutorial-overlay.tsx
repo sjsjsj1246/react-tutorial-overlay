@@ -3,6 +3,7 @@ import type { ElementStyle, Options } from '../core/types';
 import { useTutorialStore } from '../core/store';
 import { setup, styled } from 'goober';
 import { Content } from './content';
+import { tutorial } from '../core/tutorial';
 
 setup(React.createElement);
 
@@ -20,6 +21,21 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   const currentElements = useRef<{ id: string; element: HTMLElement; initialColor: string }[]>([]);
   const infoBoxElement = useRef<HTMLDivElement>(null);
   const timeout = useRef<number | undefined>();
+
+  function shouldIgnoreKeyboardEvent(): boolean {
+    const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      return false;
+    }
+
+    const tagName = activeElement.tagName;
+    return (
+      activeElement.isContentEditable ||
+      tagName === 'INPUT' ||
+      tagName === 'TEXTAREA' ||
+      tagName === 'SELECT'
+    );
+  }
 
   function resetHighlightedElements(): void {
     currentElements.current.forEach((item) => {
@@ -132,6 +148,40 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   }, [steps, index]);
 
   useEffect(() => {
+    if (!open || options?.keyboardNavigation === false) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (shouldIgnoreKeyboardEvent()) {
+        return;
+      }
+
+      switch (event.key) {
+        case 'Escape':
+          event.preventDefault();
+          tutorial.close();
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          tutorial.next();
+          break;
+        case 'ArrowLeft':
+          event.preventDefault();
+          tutorial.prev();
+          break;
+        default:
+          break;
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, options?.keyboardNavigation]);
+
+  useEffect(() => {
     function handleResize() {
       clearTimeout(timeout.current);
       timeout.current = setTimeout(() => {
@@ -146,11 +196,21 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
     };
   }, [steps, index, options]);
 
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (options?.closeOnOverlayClick && event.target === event.currentTarget) {
+      tutorial.close();
+    }
+  };
+
   return open ? (
-    <Wrapper>
+    <Wrapper data-testid="tutorial-overlay-backdrop" onClick={handleBackdropClick}>
       <Content ref={infoBoxElement as RefObject<HTMLInputElement>} />
       {rectStyles.map((style) => (
-        <Hightlight key={style.id} style={style} />
+        <Hightlight
+          data-testid={`tutorial-overlay-highlight-${style.id}`}
+          key={style.id}
+          style={style}
+        />
       ))}
     </Wrapper>
   ) : null;
