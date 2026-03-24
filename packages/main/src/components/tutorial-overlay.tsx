@@ -7,6 +7,9 @@ import { tutorial } from '../core/tutorial';
 
 setup(React.createElement);
 
+const DEFAULT_HIGHLIGHT_PADDING = 8;
+const MIN_VIEWPORT_OFFSET = 10;
+
 interface TutorialOverlayProps {
   options?: Options;
 }
@@ -44,6 +47,18 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
     currentElements.current = [];
   }
 
+  function getHighlightPadding(): number {
+    return Math.max(0, options?.highLightPadding ?? DEFAULT_HIGHLIGHT_PADDING);
+  }
+
+  function clamp(value: number, min: number, max: number): number {
+    if (max < min) {
+      return min;
+    }
+
+    return Math.min(Math.max(value, min), max);
+  }
+
   function setHighlightedElementPositions() {
     const stepConfig = steps[index];
     const elementIds = stepConfig?.targetIds;
@@ -58,12 +73,14 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
     }[] = [];
 
     const alreadyCalculated = elementIds[0] === currentElements.current[0]?.id;
+    const highlightPadding = getHighlightPadding();
+    let infoBoxAnchor: ElementStyle | null = null;
 
     if (!alreadyCalculated) {
       resetHighlightedElements();
     }
 
-    elementIds.forEach((id: string, index: number) => {
+    elementIds.forEach((id: string) => {
       const element: HTMLElement | null = document.getElementById(id);
       if (!element) {
         console.error(`Highlighted element with id ${id} was not found.`);
@@ -85,17 +102,23 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
       if (selectedElPosition) {
         const position: ElementStyle = {
           id: id,
-          left: selectedElPosition.left + window.scrollX - 1,
-          top: selectedElPosition.top + window.scrollY - 1,
-          width: selectedElPosition.width + 2,
-          height: selectedElPosition.height + 2,
+          left: selectedElPosition.left + window.scrollX - highlightPadding,
+          top: selectedElPosition.top + window.scrollY - highlightPadding,
+          width: selectedElPosition.width + highlightPadding * 2,
+          height: selectedElPosition.height + highlightPadding * 2,
+          borderRadius: Math.max(10, highlightPadding + 2),
         };
         positions.push(position);
-        if (index === 0) {
-          calculateInfoBoxPosition(position, stepConfig.infoBoxAlignment);
+        if (!infoBoxAnchor) {
+          infoBoxAnchor = position;
         }
       }
     });
+
+    if (infoBoxAnchor) {
+      calculateInfoBoxPosition(infoBoxAnchor, stepConfig.infoBoxAlignment);
+    }
+
     if (currentElements.current.length === 0 || !alreadyCalculated) {
       currentElements.current = elements;
     }
@@ -106,25 +129,47 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
   function calculateInfoBoxPosition(position: ElementStyle, alignment?: 'center' | 'left' | 'right') {
     const boxHeight = options?.infoBoxHeight ?? 200;
     const margin = options?.infoBoxMargin ?? 30;
+    const minLeft = window.scrollX + MIN_VIEWPORT_OFFSET;
+    const maxLeft = window.scrollX + window.innerWidth - MIN_VIEWPORT_OFFSET;
+    const minTop = window.scrollY + MIN_VIEWPORT_OFFSET;
+    const maxTop = window.scrollY + window.innerHeight - MIN_VIEWPORT_OFFSET;
 
     let newBoxTop = position.top - boxHeight - margin;
-    if (newBoxTop < 10) {
-      newBoxTop = position.top + position.height + margin;
-    }
+    const fallbackBoxTop = position.top + position.height + margin;
 
     const el = infoBoxElement.current;
     if (el) {
+      el.style.height = boxHeight + 'px';
+
+      const boxWidth = el.getBoundingClientRect().width || el.clientWidth;
       let newBoxLeft: number;
+
       if (alignment === 'left') {
-        newBoxLeft = position.left < 10 ? 10 : position.left;
+        newBoxLeft = position.left;
       } else if (alignment === 'right') {
-        newBoxLeft = position.left + position.width - el.clientWidth;
+        newBoxLeft = position.left + position.width - boxWidth;
       } else {
         newBoxLeft = position.left + position.width / 2;
-        const halfOfBoxWidth = el.clientWidth / 2;
-        newBoxLeft = newBoxLeft - halfOfBoxWidth < 10 ? 10 + halfOfBoxWidth : newBoxLeft;
+        const halfOfBoxWidth = boxWidth / 2;
+        newBoxLeft = clamp(newBoxLeft, minLeft + halfOfBoxWidth, maxLeft - halfOfBoxWidth);
       }
-      el.style.height = boxHeight + 'px';
+
+      if (alignment !== 'center') {
+        newBoxLeft = clamp(newBoxLeft, minLeft, maxLeft - boxWidth);
+      }
+
+      const maxBoxTop = maxTop - boxHeight;
+      if (newBoxTop < minTop) {
+        newBoxTop = fallbackBoxTop;
+      }
+      if (newBoxTop > maxBoxTop) {
+        if (position.top - boxHeight - margin >= minTop) {
+          newBoxTop = position.top - boxHeight - margin;
+        } else {
+          newBoxTop = clamp(newBoxTop, minTop, maxBoxTop);
+        }
+      }
+
       el.style.top = newBoxTop + 'px';
       el.style.left = newBoxLeft + 'px';
       el.style.transform = alignment === 'center' ? 'translate(-50%)' : '';
@@ -229,7 +274,7 @@ const Wrapper = styled('div')`
 const Hightlight = styled('div')`
   position: absolute;
   z-index: 9999;
+  box-sizing: border-box;
   border: 2px solid #ff0000;
   border-radius: 0.625rem;
-  transform: translate(-1px, -1px);
 `;

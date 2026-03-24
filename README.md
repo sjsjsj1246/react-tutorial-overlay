@@ -49,6 +49,7 @@ const App = () => {
         },
       ],
       options: {
+        highLightPadding: 12,
         infoBoxHeight: 220,
         infoBoxMargin: 24,
         keyboardNavigation: true,
@@ -73,6 +74,8 @@ const App = () => {
 
 `content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
+`highLightPadding` expands the highlight frame around the target element. It defaults to `8` pixels and applies to the rendered highlight box as well as the info box anchor position.
+
 Keyboard navigation is enabled by default while the overlay is open:
 
 - `Escape` closes the tutorial.
@@ -82,6 +85,8 @@ Keyboard navigation is enabled by default while the overlay is open:
 Set `options.keyboardNavigation` to `false` to disable those shortcuts. Shortcuts are ignored while an `input`, `textarea`, `select`, or `contenteditable` element has focus.
 
 Set `options.closeOnOverlayClick` to `true` to close the tutorial when the dimmed backdrop itself is clicked. Clicks on the highlight frame and info box do not trigger close.
+
+The info box automatically flips and clamps itself to stay inside the viewport when the target sits close to an edge.
 
 Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options })` from any event handler or effect.
 
