@@ -99,6 +99,8 @@ Set `options.closeOnOverlayClick` to `true` to close the tutorial when the dimme
 
 The info box automatically flips and clamps itself to stay inside the viewport when the target sits close to an edge.
 
+For accessibility, the info box is exposed as a labeled `dialog`. When the tutorial opens, focus moves into the info box controls, and when it closes, focus returns to the element that was active before open. The library does not currently trap focus inside the overlay.
+
 `options.onClose` still runs whenever the tutorial closes. Use the returned Promise when you need async flow control after the tutorial ends.
 
 Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options })` from any event handler or effect.
