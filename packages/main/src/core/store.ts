@@ -49,8 +49,8 @@ const reducer = (state: State, action: Action): State => {
         };
       }
     case ActionType.PREV:
-      state.tutorial.steps[state.index]?.onPrevStep?.();
       if (state.index > 0) {
+        state.tutorial.steps[state.index]?.onPrevStep?.();
         return {
           ...state,
           index: state.index - 1,

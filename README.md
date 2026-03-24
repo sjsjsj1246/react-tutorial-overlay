@@ -31,27 +31,33 @@ yarn add react-tutorial-overlay
 ```
 
 ```jsx
-import { TutorialOverlay, tutorial } from "../src";
+import { TutorialOverlay, tutorial } from 'react-tutorial-overlay';
 
 const App = () => {
   const handleClick = () => {
-    tutorial.open([
-      {
-        targetIds: ["target1"],
-        title: "title",
-        content: "content",
-      },
-    ]);
+    tutorial.open({
+      steps: [
+        {
+          targetIds: ['target1'],
+          title: 'title',
+          content: 'content',
+        },
+      ],
+      options: {},
+    });
   };
 
   return (
     <div>
       <button onClick={handleClick}>open</button>
+      <div id="target1">target</div>
       <TutorialOverlay />
     </div>
   );
 };
 ```
+
+`content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
 ## Documentation
 
