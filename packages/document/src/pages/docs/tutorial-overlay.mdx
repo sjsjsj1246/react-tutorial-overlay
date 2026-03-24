@@ -24,6 +24,10 @@ function App() {
 
 `TutorialOverlay` does not need props for the current public API. Configure behavior through `tutorial.open({ steps, options })`.
 
+The highlight frame uses `options.highLightPadding` to expand around the target. If you do not provide it, the overlay uses an `8px` padding by default.
+
 By default, the mounted overlay listens for `Escape`, `ArrowLeft`, and `ArrowRight` while it is open. You can disable that with `options.keyboardNavigation = false`.
 
 Backdrop clicks are ignored by default. Set `options.closeOnOverlayClick = true` if you want clicking the dimmed overlay area to close the tutorial.
+
+The info box automatically flips and clamps itself to stay visible when the highlighted target sits near the viewport edges.

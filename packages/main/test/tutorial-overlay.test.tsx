@@ -4,6 +4,8 @@ import { TutorialOverlay } from '../src/components/tutorial-overlay';
 import { tutorial } from '../src/core/tutorial';
 import type { Options } from '../src/core/types';
 
+const DEFAULT_HIGHLIGHT_PADDING = 8;
+
 function renderOverlay() {
   render(
     <div>
@@ -33,6 +35,29 @@ function openTutorial(options: Options = {}) {
       options,
     });
   });
+}
+
+function createDomRect({ left, top, width, height }: { left: number; top: number; width: number; height: number }): DOMRect {
+  return {
+    x: left,
+    y: top,
+    left,
+    top,
+    width,
+    height,
+    right: left + width,
+    bottom: top + height,
+    toJSON: () => '',
+  } as DOMRect;
+}
+
+function mockTargetRect(id: string, rect: { left: number; top: number; width: number; height: number }) {
+  const element = document.getElementById(id) as HTMLElement;
+  element.getBoundingClientRect = jest.fn(() => createDomRect(rect));
+}
+
+function getInfoBoxElement(): HTMLDivElement {
+  return screen.getByText('Step 1').closest('div')?.parentElement?.parentElement as HTMLDivElement;
 }
 
 describe('TutorialOverlay', () => {
@@ -156,5 +181,119 @@ describe('TutorialOverlay', () => {
 
     expect(screen.getByText('Step 1 content')).toBeInTheDocument();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  test('applies the default highlight padding to the calculated rect', () => {
+    renderOverlay();
+    mockTargetRect('first-target', { left: 100, top: 80, width: 120, height: 40 });
+
+    openTutorial();
+
+    expect(screen.getByTestId('tutorial-overlay-highlight-first-target')).toHaveStyle({
+      left: `${100 - DEFAULT_HIGHLIGHT_PADDING}px`,
+      top: `${80 - DEFAULT_HIGHLIGHT_PADDING}px`,
+      width: `${120 + DEFAULT_HIGHLIGHT_PADDING * 2}px`,
+      height: `${40 + DEFAULT_HIGHLIGHT_PADDING * 2}px`,
+    });
+  });
+
+  test('applies a custom highlight padding to the calculated rect', () => {
+    renderOverlay();
+    mockTargetRect('first-target', { left: 200, top: 160, width: 80, height: 32 });
+
+    openTutorial({ highLightPadding: 16 });
+
+    expect(screen.getByTestId('tutorial-overlay-highlight-first-target')).toHaveStyle({
+      left: '184px',
+      top: '144px',
+      width: '112px',
+      height: '64px',
+    });
+  });
+
+  test('keeps the info box inside the viewport when padding expands the target rect', () => {
+    jest.useFakeTimers();
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 800,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: 600,
+    });
+
+    renderOverlay();
+    mockTargetRect('first-target', { left: 760, top: 100, width: 40, height: 40 });
+
+    act(() => {
+      tutorial.open({
+        steps: [
+          {
+            title: 'Step 1',
+            content: 'Step 1 content',
+            targetIds: ['first-target'],
+            infoBoxAlignment: 'right',
+          },
+        ],
+        options: {
+          highLightPadding: 8,
+        },
+      });
+    });
+
+    const infoBox = getInfoBoxElement();
+    Object.defineProperty(infoBox, 'clientWidth', {
+      configurable: true,
+      value: 320,
+    });
+    Object.defineProperty(infoBox, 'clientHeight', {
+      configurable: true,
+      value: 200,
+    });
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(infoBox.style.left).toBe('470px');
+
+    jest.useRealTimers();
+  });
+
+  test('clamps the info box vertically when neither side has enough space', () => {
+    jest.useFakeTimers();
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 800,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: 600,
+    });
+
+    renderOverlay();
+    mockTargetRect('first-target', { left: 120, top: 100, width: 80, height: 40 });
+
+    openTutorial({ infoBoxHeight: 520 });
+
+    const infoBox = getInfoBoxElement();
+    Object.defineProperty(infoBox, 'clientWidth', {
+      configurable: true,
+      value: 320,
+    });
+    Object.defineProperty(infoBox, 'clientHeight', {
+      configurable: true,
+      value: 520,
+    });
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(infoBox.style.top).toBe('70px');
+
+    jest.useRealTimers();
   });
 });

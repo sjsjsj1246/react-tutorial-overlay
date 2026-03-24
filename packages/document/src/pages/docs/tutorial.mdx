@@ -26,6 +26,7 @@ function App() {
         },
       ],
       options: {
+        highLightPadding: 12,
         infoBoxHeight: 220,
         infoBoxMargin: 24,
         keyboardNavigation: true,
@@ -61,6 +62,7 @@ function App() {
 
 ## Tutorial options
 
+- `highLightPadding`: expands the highlight frame around the target in pixels. Defaults to `8`.
 - `infoBoxHeight`: sets the info box height in pixels.
 - `infoBoxMargin`: controls the vertical gap between the target and the info box.
 - `keyboardNavigation`: enables `Escape`, `ArrowLeft`, and `ArrowRight` shortcuts while the overlay is open. Defaults to `true`.
@@ -68,3 +70,4 @@ function App() {
 - `onClose`: runs when the tutorial is closed.
 
 Keyboard shortcuts are ignored while an `input`, `textarea`, `select`, or `contenteditable` element has focus.
+The info box automatically repositions itself to stay within the viewport when the target is close to an edge.

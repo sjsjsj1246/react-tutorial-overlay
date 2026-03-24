@@ -27,4 +27,5 @@ export interface ElementStyle {
   top: number;
   width: number;
   height: number;
+  borderRadius?: number;
 }
