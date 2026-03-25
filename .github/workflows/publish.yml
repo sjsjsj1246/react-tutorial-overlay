@@ -21,15 +21,21 @@ jobs:
         with:
           version: 10.12.4
 
-      - name: Use Node.js 22
+      - name: Use Node.js 22.14
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.14.0
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Print runtime versions
+        run: node -v && npm -v
 
       - name: Publish current main release
         run: pnpm release
