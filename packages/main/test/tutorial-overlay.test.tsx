@@ -18,8 +18,10 @@ function renderOverlay() {
 }
 
 function openTutorial(options: Options = {}) {
+  let resultPromise;
+
   act(() => {
-    tutorial.open({
+    resultPromise = tutorial.open({
       steps: [
         {
           title: 'Step 1',
@@ -35,6 +37,8 @@ function openTutorial(options: Options = {}) {
       options,
     });
   });
+
+  return resultPromise;
 }
 
 function createDomRect({ left, top, width, height }: { left: number; top: number; width: number; height: number }): DOMRect {
@@ -103,6 +107,16 @@ describe('TutorialOverlay', () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(screen.queryByText('Step 1 content')).not.toBeInTheDocument();
+  });
+
+  test('Escape resolves the tutorial promise with closed', async () => {
+    renderOverlay();
+
+    const resultPromise = openTutorial();
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    await expect(resultPromise).resolves.toEqual({ reason: 'closed' });
   });
 
   test('exposes the info box as a labeled dialog', () => {
@@ -218,6 +232,16 @@ describe('TutorialOverlay', () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(screen.queryByText('Step 1 content')).not.toBeInTheDocument();
+  });
+
+  test('backdrop click resolves the tutorial promise with closed when enabled', async () => {
+    renderOverlay();
+
+    const resultPromise = openTutorial({ closeOnOverlayClick: true });
+
+    fireEvent.click(screen.getByTestId('tutorial-overlay-backdrop'));
+
+    await expect(resultPromise).resolves.toEqual({ reason: 'closed' });
   });
 
   test('does not close on backdrop click by default', () => {

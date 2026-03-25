@@ -37,7 +37,7 @@ export interface Tutorial {
   startAt?: number;
 }
 
-export type TutorialResultReason = 'completed' | 'skipped' | 'closed';
+export type TutorialResultReason = 'completed' | 'skipped' | 'closed' | 'replaced';
 
 export interface TutorialResult {
   reason: TutorialResultReason;

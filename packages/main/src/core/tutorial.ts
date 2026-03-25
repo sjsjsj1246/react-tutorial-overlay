@@ -10,7 +10,7 @@ import type { Step, Tutorial, TutorialProgressState, TutorialResult } from './ty
 
 const open = (tutorial: Tutorial, otherState?: Omit<State, 'tutorial'>): Promise<TutorialResult> => {
   if (getStoreState().open || hasPendingTutorialResult()) {
-    dispatch({ type: ActionType.CLOSE, payload: { reason: 'closed' } });
+    dispatch({ type: ActionType.CLOSE, payload: { reason: 'replaced' } });
   }
 
   const resultPromise = createPendingTutorialResult();

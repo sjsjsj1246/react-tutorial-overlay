@@ -62,7 +62,7 @@ function App() {
 
 ## Available methods
 
-- `tutorial.open({ steps, options, startAt })`: opens a tutorial and starts at `startAt` when provided. `startAt` is clamped to the available step range. Returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>` when that tutorial ends.
+- `tutorial.open({ steps, options, startAt })`: opens a tutorial and starts at `startAt` when provided. `startAt` is clamped to the available step range. Returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' | 'replaced' }>` when that tutorial ends.
 - `tutorial.next()`: moves to the next step and closes the overlay after the last step.
 - `tutorial.prev()`: moves back one step when possible.
 - `tutorial.goTo(index)`: moves the active tutorial to a specific step. The index is clamped to the available range, and calling it while closed is a no-op.
@@ -74,7 +74,8 @@ function App() {
 
 - `completed`: the last step was completed through `tutorial.next()` or the built-in `완료` button.
 - `skipped`: the built-in `건너뛰기` button was clicked.
-- `closed`: the tutorial was closed manually with `tutorial.close()`, `Escape`, backdrop click, or because a newer tutorial replaced a pending one.
+- `closed`: the tutorial was closed manually with `tutorial.close()`, `Escape`, or backdrop click.
+- `replaced`: a newer `tutorial.open()` call replaced a tutorial whose promise was still pending.
 
 ## Step fields
 
@@ -114,7 +115,7 @@ console.log(state.currentStep?.title);
 - `labels`: overrides the built-in `prev`, `next`, `skip`, and `done` button labels.
 - `keyboardNavigation`: enables `Escape`, `ArrowLeft`, and `ArrowRight` shortcuts while the overlay is open. Defaults to `true`.
 - `closeOnOverlayClick`: closes the tutorial when the backdrop itself is clicked. Defaults to `false`.
-- `onClose`: runs when the tutorial is closed.
+- `onClose`: runs when the active tutorial is closed, including replacement by a newer `tutorial.open()` call.
 
 Keyboard shortcuts are ignored while an `input`, `textarea`, `select`, or `contenteditable` element has focus.
 The info box automatically repositions itself to stay within the viewport when the target is close to an edge.

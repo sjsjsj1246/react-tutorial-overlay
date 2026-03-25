@@ -21,6 +21,7 @@
 - 완료: `codex/add-promise-api` 병합 완료
 - 완료: `codex/improve-accessibility` 병합 완료
 - 완료: `codex/add-progress-control-api` 병합 완료
+- 완료: `codex/harden-promise-api` 병합 완료
 - 반영된 내용:
   - `packages/main/test/setup.ts` 추가
   - `packages/main/jest.config.js` 정상화
@@ -45,10 +46,13 @@
   - `input` / `textarea` / `select` / `contenteditable` 포커스 중 단축키 무시 처리 추가
   - backdrop click close를 opt-in 동작으로 추가하고 highlight / info box 클릭과 구분
   - keyboard / overlay close 관련 README 및 docs 예제 업데이트
-  - `tutorial.open()`이 `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>`를 반환하도록 확장
-  - 마지막 step 완료, built-in 건너뛰기, 외부 close 경로별 resolve reason 구분 추가
-  - 새 tutorial open 시 이전 pending promise를 `closed`로 정리하도록 보정
+  - `tutorial.open()`이 `Promise<{ reason: 'completed' | 'skipped' | 'closed' | 'replaced' }>`를 반환하도록 확장
+  - 마지막 step 완료, built-in 건너뛰기, 외부 close 경로, replacement open 경로별 resolve reason 계약 고정
+  - 새 tutorial open 시 이전 pending promise를 `replaced`로 정리하도록 보정
   - Promise API와 `onClose`의 역할을 분리하고 기존 callback 계약 유지
+  - 이미 settle된 뒤의 중복 `tutorial.close()` 호출이 Promise 계약이나 `onClose` 호출 횟수를 깨뜨리지 않도록 보강
+  - `Escape` / backdrop click / replacement open Promise resolve reason 테스트 추가
+  - README 및 docs에 Promise resolve 정책과 `replaced` reason 명시
   - `tutorial.open()`에 `startAt` 추가로 시작 step을 명시적으로 제어 가능
   - `tutorial.goTo(index)` 추가로 active tutorial의 step index를 외부에서 이동 가능
   - `tutorial.getState()` 추가로 open 여부, 현재 index, step 수, current step snapshot 조회 가능
@@ -87,6 +91,8 @@
 ## Next Product Work Candidates
 
 첫 기능 확장 작업으로 권장했던 `codex/add-keyboard-and-close-controls`, `codex/add-highlight-padding-and-overlay-click-behavior`, `codex/add-promise-api`는 모두 완료 및 병합됐다.
+
+Promise API 후속 안정화 작업으로 진행한 `codex/harden-promise-api`도 완료 및 병합됐다. 현재 Promise contract는 `completed`, `skipped`, `closed`, `replaced`를 구분하고, replacement open과 중복 close edge case까지 테스트로 고정된 상태다.
 
 후속 접근성 안정화 작업으로 권장했던 `codex/improve-accessibility`도 완료 및 병합됐다. 현재 overlay는 dialog semantics와 open/close focus lifecycle까지는 안정화됐고, focus trap과 background inert는 다음 접근성 확장 후보로 남겨둔다.
 
@@ -399,9 +405,10 @@ Expected:
 **Goal:** 튜토리얼 완료/취소 시점을 소비자가 await할 수 있도록 Promise 기반 API를 추가한다.
 
 **Result:**
-- `tutorial.open()`이 `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>`를 반환하도록 변경
-- 마지막 step 완료 시 `completed`, built-in `건너뛰기` 버튼 경로에서 `skipped`, 외부 `tutorial.close()` / `Escape` / backdrop close / replacement open 경로에서 `closed` resolve 추가
+- `tutorial.open()`이 `Promise<{ reason: 'completed' | 'skipped' | 'closed' | 'replaced' }>`를 반환하도록 변경
+- 마지막 step 완료 시 `completed`, built-in `건너뛰기` 버튼 경로에서 `skipped`, 외부 `tutorial.close()` / `Escape` / backdrop close 경로에서 `closed`, replacement open 경로에서 `replaced` resolve 추가
 - pending promise가 한 번만 settle되도록 중복 resolve 방지
-- 새 tutorial을 열면 기존 pending tutorial을 `closed`로 정리하고 기존 `options.onClose`도 계속 실행되도록 유지
+- 새 tutorial을 열면 기존 pending tutorial을 `replaced`로 정리하고 기존 `options.onClose`도 계속 실행되도록 유지
 - `packages/main/test/tutorial.test.tsx` 및 `packages/main/test/content.test.tsx`에 Promise API 회귀 테스트 추가
+- `packages/main/test/tutorial-overlay.test.tsx`에 `Escape` / backdrop click close reason 테스트 추가
 - README 및 docs landing/tutorial/tutorial-overlay 문서에 async usage 예제와 reason 계약 반영
