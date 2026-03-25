@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import type { ElementStyle, Options } from '../core/types';
+import type { ElementStyle, Options, Step } from '../core/types';
 import { useTutorialStore } from '../core/store';
 import { setup, styled } from 'goober';
 import { Content } from './content';
@@ -11,6 +11,10 @@ import {
   DEFAULT_Z_INDEX,
   HIGHLIGHT_Z_INDEX_OFFSET,
   getBaseZIndex,
+  getHighlightBorderColor,
+  getHighlightBorderRadius,
+  getInfoBoxHeight,
+  getInfoBoxMargin,
 } from '../core/options';
 
 setup(React.createElement);
@@ -134,7 +138,7 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
     });
 
     if (infoBoxAnchor) {
-      calculateInfoBoxPosition(infoBoxAnchor, stepConfig.infoBoxAlignment);
+      calculateInfoBoxPosition(infoBoxAnchor, stepConfig);
     }
 
     if (currentElements.current.length === 0 || !alreadyCalculated) {
@@ -144,9 +148,10 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
     setRectStyles(positions);
   }
 
-  function calculateInfoBoxPosition(position: ElementStyle, alignment?: 'center' | 'left' | 'right') {
-    const boxHeight = options?.infoBoxHeight ?? 200;
-    const margin = options?.infoBoxMargin ?? 30;
+  function calculateInfoBoxPosition(position: ElementStyle, step: Step) {
+    const alignment = step.infoBoxAlignment;
+    const boxHeight = getInfoBoxHeight(options, step);
+    const margin = getInfoBoxMargin(options, step);
     const minLeft = window.scrollX + MIN_VIEWPORT_OFFSET;
     const maxLeft = window.scrollX + window.innerWidth - MIN_VIEWPORT_OFFSET;
     const minTop = window.scrollY + MIN_VIEWPORT_OFFSET;
@@ -308,8 +313,8 @@ export const TutorialOverlay = React.memo(({}: TutorialOverlayProps) => {
           key={style.id}
           style={{
             ...style,
-            borderColor: options?.highlightBorderColor ?? DEFAULT_HIGHLIGHT_BORDER_COLOR,
-            borderRadius: options?.highlightBorderRadius ?? style.borderRadius,
+            borderColor: getHighlightBorderColor(options, steps[index]),
+            borderRadius: getHighlightBorderRadius(options, steps[index], style.borderRadius),
             zIndex: baseZIndex + HIGHLIGHT_Z_INDEX_OFFSET,
           }}
         />

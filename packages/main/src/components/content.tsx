@@ -2,7 +2,7 @@ import React, { useId } from 'react';
 import { useTutorialStore } from '../core/store';
 import { skipTutorial, tutorial } from '../core/tutorial';
 import { styled } from 'goober';
-import { DEFAULT_INFO_BOX_WIDTH, INFO_BOX_Z_INDEX_OFFSET, getBaseZIndex, getLabels } from '../core/options';
+import { INFO_BOX_Z_INDEX_OFFSET, getBaseZIndex, getInfoBoxWidth, getLabels } from '../core/options';
 
 export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
   const {
@@ -12,7 +12,7 @@ export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
   const currentStep = steps[index];
   const titleId = useId();
   const contentId = useId();
-  const labels = getLabels(options);
+  const labels = getLabels(options, currentStep);
 
   const handlePrev = () => {
     tutorial.prev();
@@ -34,7 +34,7 @@ export const Content = React.forwardRef<HTMLDivElement>((_, ref) => {
       aria-describedby={currentStep.content ? contentId : undefined}
       tabIndex={-1}
       style={{
-        width: options?.infoBoxWidth ?? DEFAULT_INFO_BOX_WIDTH,
+        width: getInfoBoxWidth(options, currentStep),
         zIndex: getBaseZIndex(options) + INFO_BOX_Z_INDEX_OFFSET,
       }}
     >

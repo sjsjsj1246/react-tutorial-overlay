@@ -1,19 +1,30 @@
 export type StyleValue = number | string;
-
-export interface Step {
-  targetIds: string[];
-  content?: string;
-  title?: string;
-  infoBoxAlignment?: 'center' | 'left' | 'right';
-  onPrevStep?: () => void;
-  onNextStep?: () => void;
-}
+export type InfoBoxAlignment = 'center' | 'left' | 'right';
 
 export interface Labels {
   prev?: string;
   next?: string;
   skip?: string;
   done?: string;
+}
+
+export interface StepOptions {
+  infoBoxHeight?: number;
+  infoBoxWidth?: StyleValue;
+  infoBoxMargin?: number;
+  highlightBorderColor?: string;
+  highlightBorderRadius?: StyleValue;
+  labels?: Labels;
+}
+
+export interface Step {
+  targetIds: string[];
+  content?: string;
+  title?: string;
+  infoBoxAlignment?: InfoBoxAlignment;
+  options?: StepOptions;
+  onPrevStep?: () => void;
+  onNextStep?: () => void;
 }
 
 export interface Options {

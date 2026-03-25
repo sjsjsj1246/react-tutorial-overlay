@@ -47,6 +47,15 @@ const App = () => {
           title: 'Second step',
           content: 'Each step can highlight one or more element ids.',
           infoBoxAlignment: 'right',
+          options: {
+            infoBoxWidth: '28rem',
+            infoBoxMargin: 16,
+            highlightBorderColor: '#f97316',
+            highlightBorderRadius: 20,
+            labels: {
+              done: 'Ship it',
+            },
+          },
         },
       ],
       options: {
@@ -121,9 +130,11 @@ console.log(state.currentStep?.title);
 
 `highLightPadding` expands the highlight frame around the target element. It defaults to `8` pixels and applies to the rendered highlight box as well as the info box anchor position.
 
-Use `overlayColor`, `highlightBorderColor`, `highlightBorderRadius`, `zIndex`, and `infoBoxWidth` to match the built-in UI to your product without changing the overlay, highlight, or info box structure. When omitted, the existing defaults remain in place.
+Global `options` still define the shared tutorial chrome. Use them for shared defaults such as `overlayColor`, `highlightBorderColor`, `highlightBorderRadius`, `infoBoxHeight`, `infoBoxWidth`, `infoBoxMargin`, `labels`, and `zIndex`.
 
-Use `labels` to override the built-in button text. The default labels are `이전`, `다음`, `건너뛰기`, and `완료`.
+Use `step.options` when a single step needs different `infoBoxHeight`, `infoBoxWidth`, `infoBoxMargin`, `highlightBorderColor`, `highlightBorderRadius`, or partial `labels`. The fallback order is `step.options` -> global `options` -> built-in defaults. Omitted label keys also follow that order.
+
+`infoBoxAlignment` remains a step field, and `overlayColor` remains global-only so the backdrop stays consistent across the tutorial run.
 
 Keyboard navigation is enabled by default while the overlay is open:
 

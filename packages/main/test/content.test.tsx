@@ -14,6 +14,50 @@ function renderOverlay() {
 }
 
 describe('Content', () => {
+  test('prefers step labels over global labels and falls back to global or built-in labels', () => {
+    renderOverlay();
+
+    act(() => {
+      tutorial.open({
+        steps: [
+          {
+            title: 'Step 1',
+            content: 'Step 1 content',
+            targetIds: ['first-target'],
+            options: {
+              labels: {
+                skip: 'Leave',
+              },
+            },
+          },
+          {
+            title: 'Step 2',
+            content: 'Step 2 content',
+            targetIds: ['second-target'],
+            options: {
+              labels: {
+                done: 'Ship it',
+              },
+            },
+          },
+        ],
+        options: {
+          labels: {
+            next: 'Continue',
+          },
+        },
+      });
+    });
+
+    expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(screen.getByRole('button', { name: '이전' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ship it' })).toBeInTheDocument();
+  });
+
   test('reads built-in button labels from options.labels', () => {
     renderOverlay();
 
