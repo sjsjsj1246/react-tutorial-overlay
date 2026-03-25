@@ -41,6 +41,12 @@ const getState = (): TutorialProgressState => {
       ? {
           ...currentStep,
           targetIds: [...currentStep.targetIds],
+          options: currentStep.options
+            ? {
+                ...currentStep.options,
+                labels: currentStep.options.labels ? { ...currentStep.options.labels } : undefined,
+              }
+            : undefined,
         }
       : null,
   };

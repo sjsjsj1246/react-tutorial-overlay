@@ -396,4 +396,54 @@ describe('TutorialOverlay', () => {
       zIndex: '4322',
     });
   });
+
+  test('prefers step-level highlight and info box overrides over global options', () => {
+    renderOverlay();
+    mockTargetRect('first-target', { left: 200, top: 550, width: 80, height: 40 });
+
+    act(() => {
+      tutorial.open({
+        steps: [
+          {
+            title: 'Step 1',
+            content: 'Step 1 content',
+            targetIds: ['first-target'],
+            infoBoxAlignment: 'left',
+            options: {
+              infoBoxHeight: 260,
+              infoBoxWidth: '30rem',
+              infoBoxMargin: 10,
+              highlightBorderColor: 'rgb(255, 0, 128)',
+              highlightBorderRadius: 18,
+            },
+          },
+        ],
+        options: {
+          overlayColor: 'rgba(12, 34, 56, 0.7)',
+          infoBoxHeight: 200,
+          infoBoxWidth: '18rem',
+          infoBoxMargin: 30,
+          highlightBorderColor: 'rgb(0, 255, 136)',
+          highlightBorderRadius: 12,
+          zIndex: 4321,
+        },
+      });
+    });
+
+    expect(screen.getByTestId('tutorial-overlay-backdrop')).toHaveStyle({
+      backgroundColor: 'rgba(12, 34, 56, 0.7)',
+      zIndex: '4321',
+    });
+    expect(screen.getByRole('dialog', { name: 'Step 1' })).toHaveStyle({
+      width: '30rem',
+      height: '260px',
+      top: '272px',
+      left: '192px',
+    });
+    expect(screen.getByTestId('tutorial-overlay-highlight-first-target')).toHaveStyle({
+      borderColor: 'rgb(255, 0, 128)',
+      borderRadius: '18px',
+      zIndex: '4322',
+    });
+  });
 });

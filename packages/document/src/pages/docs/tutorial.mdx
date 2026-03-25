@@ -25,6 +25,21 @@ function App() {
             content: 'This message is plain text.',
             infoBoxAlignment: 'center',
           },
+          {
+            targetIds: ['target-id'],
+            title: 'Focused step styling',
+            content: 'This step overrides the shared tutorial styling.',
+            infoBoxAlignment: 'right',
+            options: {
+              infoBoxWidth: '28rem',
+              infoBoxMargin: 16,
+              highlightBorderColor: '#f97316',
+              highlightBorderRadius: 20,
+              labels: {
+                done: 'Ship it',
+              },
+            },
+          },
         ],
         options: {
           highLightPadding: 12,
@@ -83,6 +98,7 @@ function App() {
 - `title`: optional heading shown in the info box.
 - `content`: optional plain text body.
 - `infoBoxAlignment`: optional `center`, `left`, or `right`.
+- `options`: optional per-step overrides for `infoBoxHeight`, `infoBoxWidth`, `infoBoxMargin`, `highlightBorderColor`, `highlightBorderRadius`, and partial `labels`.
 - `onPrevStep`: optional callback that runs when leaving the step with `tutorial.prev()`.
 - `onNextStep`: optional callback that runs when leaving the step with `tutorial.next()`.
 
@@ -105,19 +121,20 @@ console.log(state.currentStep?.title);
 ## Tutorial options
 
 - `highLightPadding`: expands the highlight frame around the target in pixels. Defaults to `8`.
-- `infoBoxHeight`: sets the info box height in pixels.
-- `infoBoxWidth`: sets the info box width with a CSS length such as `360` or `'24rem'`. Defaults to `'20rem'`.
-- `infoBoxMargin`: controls the vertical gap between the target and the info box.
+- `infoBoxHeight`: sets the default info box height in pixels and can be overridden per step.
+- `infoBoxWidth`: sets the default info box width with a CSS length such as `360` or `'24rem'`. Defaults to `'20rem'` and can be overridden per step.
+- `infoBoxMargin`: controls the default vertical gap between the target and the info box and can be overridden per step.
 - `overlayColor`: sets the backdrop color. Defaults to `rgba(0, 0, 0, 0.5)`.
-- `highlightBorderColor`: sets the highlight border color. Defaults to `#ff0000`.
-- `highlightBorderRadius`: sets the highlight border radius with a CSS length. Defaults to the current padding-based radius.
+- `highlightBorderColor`: sets the default highlight border color. Defaults to `#ff0000` and can be overridden per step.
+- `highlightBorderRadius`: sets the default highlight border radius with a CSS length. Defaults to the current padding-based radius and can be overridden per step.
 - `zIndex`: sets the overlay stack level. Defaults to `9999`.
-- `labels`: overrides the built-in `prev`, `next`, `skip`, and `done` button labels.
+- `labels`: overrides the built-in `prev`, `next`, `skip`, and `done` button labels by default and can be partially overridden per step.
 - `keyboardNavigation`: enables `Escape`, `ArrowLeft`, and `ArrowRight` shortcuts while the overlay is open. Defaults to `true`.
 - `closeOnOverlayClick`: closes the tutorial when the backdrop itself is clicked. Defaults to `false`.
 - `onClose`: runs when the active tutorial is closed, including replacement by a newer `tutorial.open()` call.
 
 Keyboard shortcuts are ignored while an `input`, `textarea`, `select`, or `contenteditable` element has focus.
 The info box automatically repositions itself to stay within the viewport when the target is close to an edge.
+Step customization resolves in this order: `step.options` -> tutorial `options` -> built-in defaults. `overlayColor`, `highLightPadding`, `keyboardNavigation`, `closeOnOverlayClick`, `zIndex`, and `onClose` stay global for the whole run.
 When a tutorial opens, focus moves into the labeled dialog UI and returns to the previously active element after close. The current overlay does not trap focus.
 `onClose` remains available for side effects, while the Promise returned by `tutorial.open()` is the async completion hook.
