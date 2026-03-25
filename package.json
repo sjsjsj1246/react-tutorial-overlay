@@ -1,7 +1,7 @@
 {
   "name": "react-tutorial-overlay",
   "description": "A headless library that makes it easy to put tutorials on top of the screen.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "sjsjsj1246",
   "repository": "sjsjsj1246/react-tutorial-overlay",
   "license": "MIT",
