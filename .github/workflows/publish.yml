@@ -1,16 +1,14 @@
-name: Release
+name: Publish
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  release_pr:
+  publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -33,11 +31,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create or update release PR
-        uses: changesets/action@v1
-        with:
-          version: pnpm version-packages
-          title: "[-]: version packages"
-          commit: "[-]: version packages"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish current main release
+        run: pnpm release

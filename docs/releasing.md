@@ -20,7 +20,8 @@ After that, the GitHub release workflow can publish without storing a long-lived
 2. Add a changeset before opening or updating the PR.
 3. Merge the PR into `main`.
 4. Let the Release workflow open or update the version PR.
-5. Merge the version PR to publish the new npm version and update `CHANGELOG.md`.
+5. Merge the version PR to update `CHANGELOG.md` and package versions on `main`.
+6. Run the `Publish` workflow manually when you want to ship that version to npm.
 
 ## Adding a changeset
 
@@ -68,10 +69,15 @@ The normal path should be the GitHub Release workflow instead of local publishin
 
 ## What the release workflow does
 
-On pushes to `main` or manual dispatch, `.github/workflows/release.yml` runs `changesets/action`.
+On pushes to `main`, `.github/workflows/release.yml` runs `changesets/action`.
 
 - If unreleased changesets exist, it opens or updates a release PR.
-- If the release PR has already been merged and version files are on `main`, it runs `pnpm release`.
+- It does not publish to npm.
+
+## What the publish workflow does
+
+Run `.github/workflows/publish.yml` manually when you want to ship the current version on `main`.
+
 - `pnpm release` verifies tests, docs lint/build, size limits, and then runs `changeset publish`.
 - Publishing uses GitHub Actions OIDC via npm Trusted Publishing instead of an `NPM_TOKEN` secret.
 
