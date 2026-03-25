@@ -1,3 +1,4 @@
+---
 'react-tutorial-overlay': minor
 ---
 
