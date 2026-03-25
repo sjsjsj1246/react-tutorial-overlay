@@ -80,6 +80,7 @@ Run `.github/workflows/publish.yml` manually when you want to ship the current v
 
 - `pnpm release` verifies tests, docs lint/build, size limits, and then runs `changeset publish`.
 - Publishing uses GitHub Actions OIDC via npm Trusted Publishing instead of an `NPM_TOKEN` secret.
+- After npm publish succeeds, the workflow creates a `v<version>` Git tag and a GitHub Release with generated release notes.
 
 ## Notes for this repo
 
