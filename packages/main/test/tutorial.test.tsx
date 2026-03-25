@@ -134,7 +134,7 @@ describe('tutorial core API', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  test('opening a new tutorial resolves the previous pending promise with closed', async () => {
+  test('opening a new tutorial resolves the previous pending promise with replaced', async () => {
     render(<StateProbe />);
 
     let firstPromise;
