@@ -34,12 +34,20 @@ export interface Options {
 export interface Tutorial {
   steps: Step[];
   options?: Options;
+  startAt?: number;
 }
 
 export type TutorialResultReason = 'completed' | 'skipped' | 'closed' | 'replaced';
 
 export interface TutorialResult {
   reason: TutorialResultReason;
+}
+
+export interface TutorialProgressState {
+  open: boolean;
+  index: number;
+  stepCount: number;
+  currentStep: Step | null;
 }
 
 export interface ElementStyle {

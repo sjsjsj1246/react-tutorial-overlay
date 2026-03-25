@@ -60,4 +60,6 @@ Mount `<TutorialOverlay />` once in your app. Then call `tutorial.open({ steps, 
 
 `tutorial.open()` resolves with `{ reason: 'completed' | 'skipped' | 'closed' | 'replaced' }` so you can await the end of the tutorial.
 
+Use `startAt` to open on a specific step, `tutorial.goTo(index)` to move within an active tutorial, and `tutorial.getState()` to read `{ open, index, stepCount, currentStep }` for external progress UI.
+
 `content` accepts a string. HTML inside that string is shown as text rather than injected into the page.

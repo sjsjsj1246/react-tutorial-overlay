@@ -6,6 +6,7 @@ export enum ActionType {
   CLOSE,
   NEXT,
   PREV,
+  GOTO,
   UPDATE,
 }
 
@@ -14,6 +15,7 @@ type Action =
   | { type: ActionType.CLOSE; payload: { reason: TutorialResultReason } }
   | { type: ActionType.NEXT }
   | { type: ActionType.PREV }
+  | { type: ActionType.GOTO; payload: { index: number } }
   | { type: ActionType.UPDATE; payload: { index: number; step: Step } };
 
 export interface State {
@@ -33,6 +35,14 @@ const initialState: State = {
 
 let pendingTutorialResolver: ((result: TutorialResult) => void) | null = null;
 
+const clampIndex = (index: number, stepCount: number): number => {
+  if (stepCount <= 0 || !Number.isFinite(index)) {
+    return 0;
+  }
+
+  return Math.min(Math.max(Math.trunc(index), 0), stepCount - 1);
+};
+
 function settlePendingTutorial(result: TutorialResult) {
   if (!pendingTutorialResolver) {
     return;
@@ -47,7 +57,10 @@ function settlePendingTutorial(result: TutorialResult) {
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case ActionType.OPEN:
-      return action.payload;
+      return {
+        ...action.payload,
+        index: clampIndex(action.payload.index, action.payload.tutorial.steps.length),
+      };
     case ActionType.CLOSE:
       if (!state.open && !hasPendingTutorialResult()) {
         return initialState;
@@ -75,6 +88,15 @@ const reducer = (state: State, action: Action): State => {
         };
       }
       return state;
+    case ActionType.GOTO:
+      if (!state.open || state.tutorial.steps.length === 0) {
+        return state;
+      }
+
+      return {
+        ...state,
+        index: clampIndex(action.payload.index, state.tutorial.steps.length),
+      };
     case ActionType.UPDATE:
       return {
         ...state,
