@@ -4,7 +4,15 @@ This repository now uses [Changesets](https://github.com/changesets/changesets) 
 
 ## One-time setup
 
-The GitHub release workflow expects an `NPM_TOKEN` repository secret with publish access to the `react-tutorial-overlay` npm package.
+This repository uses npm Trusted Publishing for GitHub Actions.
+
+Set up once on npm:
+
+1. Open the `react-tutorial-overlay` package settings on npm.
+2. Add a Trusted Publisher for the `sjsjsj1246/react-tutorial-overlay` GitHub repository.
+3. Set the workflow filename to `release.yml`.
+
+After that, the GitHub release workflow can publish without storing a long-lived `NPM_TOKEN` secret.
 
 ## Everyday workflow
 
@@ -65,6 +73,7 @@ On pushes to `main` or manual dispatch, `.github/workflows/release.yml` runs `ch
 - If unreleased changesets exist, it opens or updates a release PR.
 - If the release PR has already been merged and version files are on `main`, it runs `pnpm release`.
 - `pnpm release` verifies tests, docs lint/build, size limits, and then runs `changeset publish`.
+- Publishing uses GitHub Actions OIDC via npm Trusted Publishing instead of an `NPM_TOKEN` secret.
 
 ## Notes for this repo
 
