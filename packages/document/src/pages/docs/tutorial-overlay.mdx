@@ -24,7 +24,7 @@ function App() {
 
 `TutorialOverlay` does not need props for the current public API. Configure behavior through `tutorial.open({ steps, options })`.
 
-Because `tutorial.open()` returns a Promise, you can keep `<TutorialOverlay />` mounted once and await tutorial completion from any handler or effect that triggers the open call.
+Because `tutorial.open()` returns a Promise, you can keep `<TutorialOverlay />` mounted once and await tutorial completion from any handler or effect that triggers the open call. The Promise resolves with `completed`, `skipped`, `closed`, or `replaced` depending on how that run ended.
 
 The highlight frame uses `options.highLightPadding` to expand around the target. If you do not provide it, the overlay uses an `8px` padding by default.
 

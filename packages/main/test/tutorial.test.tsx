@@ -155,7 +155,30 @@ describe('tutorial core API', () => {
       tutorial.close();
     });
 
-    await expect(firstPromise).resolves.toEqual({ reason: 'closed' });
+    await expect(firstPromise).resolves.toEqual({ reason: 'replaced' });
     await expect(secondPromise).resolves.toEqual({ reason: 'closed' });
+  });
+
+  test('repeated close calls after the tutorial settles do not re-run onClose or change the result', async () => {
+    render(<StateProbe />);
+    const onClose = jest.fn();
+
+    let resultPromise;
+
+    act(() => {
+      resultPromise = tutorial.open({
+        steps: [{ title: 'Only step', targetIds: ['only-target'] }],
+        options: { onClose },
+      });
+    });
+
+    act(() => {
+      tutorial.next();
+      tutorial.close();
+      tutorial.close();
+    });
+
+    await expect(resultPromise).resolves.toEqual({ reason: 'completed' });
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

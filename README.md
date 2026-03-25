@@ -88,11 +88,12 @@ const App = () => {
 };
 ```
 
-`tutorial.open()` returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>`:
+`tutorial.open()` returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' | 'replaced' }>`:
 
 - `completed`: the user finished the last step.
 - `skipped`: the user clicked the built-in `건너뛰기` button.
-- `closed`: the tutorial was closed externally, such as `tutorial.close()`, `Escape`, backdrop click, or opening a new tutorial while another promise is still pending.
+- `closed`: the tutorial was closed externally, such as `tutorial.close()`, `Escape`, or backdrop click.
+- `replaced`: a newer `tutorial.open()` call replaced a tutorial whose promise was still pending.
 
 `content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
@@ -116,7 +117,7 @@ The info box automatically flips and clamps itself to stay inside the viewport w
 
 For accessibility, the info box is exposed as a labeled `dialog`. When the tutorial opens, focus moves into the info box controls, and when it closes, focus returns to the element that was active before open. The library does not currently trap focus inside the overlay.
 
-`options.onClose` still runs whenever the tutorial closes. Use the returned Promise when you need async flow control after the tutorial ends.
+`options.onClose` still runs whenever the active tutorial closes, including replacement by a newer `tutorial.open()` call. Use the returned Promise when you need async flow control after the tutorial ends.
 
 Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options })` from any event handler or effect.
 

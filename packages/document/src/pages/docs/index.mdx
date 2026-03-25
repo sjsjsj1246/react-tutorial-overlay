@@ -58,6 +58,6 @@ const App = () => {
 
 Mount `<TutorialOverlay />` once in your app. Then call `tutorial.open({ steps, options })` from any button handler or effect.
 
-`tutorial.open()` resolves with `{ reason: 'completed' | 'skipped' | 'closed' }` so you can await the end of the tutorial.
+`tutorial.open()` resolves with `{ reason: 'completed' | 'skipped' | 'closed' | 'replaced' }` so you can await the end of the tutorial.
 
 `content` accepts a string. HTML inside that string is shown as text rather than injected into the page.

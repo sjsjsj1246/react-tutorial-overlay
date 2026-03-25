@@ -36,7 +36,7 @@ export interface Tutorial {
   options?: Options;
 }
 
-export type TutorialResultReason = 'completed' | 'skipped' | 'closed';
+export type TutorialResultReason = 'completed' | 'skipped' | 'closed' | 'replaced';
 
 export interface TutorialResult {
   reason: TutorialResultReason;

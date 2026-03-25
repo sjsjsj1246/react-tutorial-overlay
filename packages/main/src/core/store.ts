@@ -38,6 +38,7 @@ function settlePendingTutorial(result: TutorialResult) {
     return;
   }
 
+  // Clear the resolver before invoking it so duplicate close paths stay a no-op.
   const resolve = pendingTutorialResolver;
   pendingTutorialResolver = null;
   resolve(result);
@@ -48,6 +49,10 @@ const reducer = (state: State, action: Action): State => {
     case ActionType.OPEN:
       return action.payload;
     case ActionType.CLOSE:
+      if (!state.open && !hasPendingTutorialResult()) {
+        return initialState;
+      }
+
       settlePendingTutorial({ reason: action.payload.reason });
       state.tutorial.options?.onClose?.();
       return initialState;
