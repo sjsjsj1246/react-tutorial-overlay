@@ -20,6 +20,7 @@
 - 완료: `codex/add-highlight-padding-and-overlay-click-behavior` 병합 완료
 - 완료: `codex/add-promise-api` 병합 완료
 - 완료: `codex/improve-accessibility` 병합 완료
+- 완료: `codex/add-progress-control-api` 병합 완료
 - 반영된 내용:
   - `packages/main/test/setup.ts` 추가
   - `packages/main/jest.config.js` 정상화
@@ -48,6 +49,12 @@
   - 마지막 step 완료, built-in 건너뛰기, 외부 close 경로별 resolve reason 구분 추가
   - 새 tutorial open 시 이전 pending promise를 `closed`로 정리하도록 보정
   - Promise API와 `onClose`의 역할을 분리하고 기존 callback 계약 유지
+  - `tutorial.open()`에 `startAt` 추가로 시작 step을 명시적으로 제어 가능
+  - `tutorial.goTo(index)` 추가로 active tutorial의 step index를 외부에서 이동 가능
+  - `tutorial.getState()` 추가로 open 여부, 현재 index, step 수, current step snapshot 조회 가능
+  - `startAt` / `goTo(index)`의 잘못된 index는 step 범위로 clamp, closed 상태의 `goTo()`는 no-op으로 정리
+  - `goTo()`가 Promise resolve 및 `onPrevStep` / `onNextStep` callback을 건드리지 않도록 역할 분리
+  - progress control API 관련 main package 테스트 및 README/docs 예제 추가
   - README 및 docs에 async / await 사용 예제 추가
   - info box를 labeled `dialog`로 노출하고 title/content를 `aria-labelledby` / `aria-describedby`로 연결
   - overlay open 시 info box의 첫 built-in control로 focus 이동 추가
@@ -82,6 +89,8 @@
 첫 기능 확장 작업으로 권장했던 `codex/add-keyboard-and-close-controls`, `codex/add-highlight-padding-and-overlay-click-behavior`, `codex/add-promise-api`는 모두 완료 및 병합됐다.
 
 후속 접근성 안정화 작업으로 권장했던 `codex/improve-accessibility`도 완료 및 병합됐다. 현재 overlay는 dialog semantics와 open/close focus lifecycle까지는 안정화됐고, focus trap과 background inert는 다음 접근성 확장 후보로 남겨둔다.
+
+첫 progress control 확장 후보였던 `codex/add-progress-control-api`도 완료 및 병합됐다. 이제 외부 제어는 `startAt`, `goTo(index)`, `getState()`까지 포함하는 수준으로 정리됐고, 다음 확장 후보는 richer state subscription이나 callback surface가 필요한지 여부를 별도 계획 문서에서 다시 판단하면 된다.
 
 이 문서는 현재까지 반영된 후속 기능 이력을 남기는 참고 문서로 유지한다. 다음 신규 기능 후보는 별도 계획 문서에서 다시 우선순위를 잡는 편이 맞다.
 

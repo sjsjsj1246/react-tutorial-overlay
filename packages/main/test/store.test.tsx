@@ -3,6 +3,10 @@ import { act, render, screen } from '@testing-library/react';
 import { useTutorialStore } from '../src/core/store';
 import { tutorial } from '../src/core/tutorial';
 
+const progressTutorial = tutorial as typeof tutorial & {
+  goTo: (index: number) => void;
+};
+
 function StateProbe() {
   const {
     index,
@@ -60,6 +64,35 @@ describe('store step callbacks', () => {
       tutorial.prev();
     });
 
+    expect(onPrevStep).not.toHaveBeenCalled();
+    expect(screen.getByTestId('title')).toHaveTextContent('Step 1');
+  });
+
+  test('tutorial.goTo does not invoke step transition callbacks', () => {
+    const onNextStep = jest.fn();
+    const onPrevStep = jest.fn();
+
+    render(<StateProbe />);
+
+    act(() => {
+      tutorial.open({
+        steps: [
+          { title: 'Step 1', targetIds: ['first-target'], onNextStep },
+          { title: 'Step 2', targetIds: ['second-target'], onPrevStep },
+        ],
+        options: {},
+      });
+    });
+
+    act(() => {
+      progressTutorial.goTo(1);
+    });
+
+    act(() => {
+      progressTutorial.goTo(0);
+    });
+
+    expect(onNextStep).not.toHaveBeenCalled();
     expect(onPrevStep).not.toHaveBeenCalled();
     expect(screen.getByTestId('title')).toHaveTextContent('Step 1');
   });

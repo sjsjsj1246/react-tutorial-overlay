@@ -62,9 +62,11 @@ function App() {
 
 ## Available methods
 
-- `tutorial.open({ steps, options })`: opens a tutorial and starts at the first step by default. Returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>` when that tutorial ends.
+- `tutorial.open({ steps, options, startAt })`: opens a tutorial and starts at `startAt` when provided. `startAt` is clamped to the available step range. Returns `Promise<{ reason: 'completed' | 'skipped' | 'closed' }>` when that tutorial ends.
 - `tutorial.next()`: moves to the next step and closes the overlay after the last step.
 - `tutorial.prev()`: moves back one step when possible.
+- `tutorial.goTo(index)`: moves the active tutorial to a specific step. The index is clamped to the available range, and calling it while closed is a no-op.
+- `tutorial.getState()`: returns `{ open, index, stepCount, currentStep }` for external progress controls.
 - `tutorial.close()`: closes the overlay and resolves the pending `tutorial.open()` promise with `reason: 'closed'`.
 - `tutorial.update(index, step)`: replaces a step definition while the tutorial is active.
 
@@ -82,6 +84,22 @@ function App() {
 - `infoBoxAlignment`: optional `center`, `left`, or `right`.
 - `onPrevStep`: optional callback that runs when leaving the step with `tutorial.prev()`.
 - `onNextStep`: optional callback that runs when leaving the step with `tutorial.next()`.
+
+## External progress control
+
+```jsx
+await tutorial.open({
+  steps,
+  startAt: 1,
+});
+
+tutorial.goTo(0);
+
+const state = tutorial.getState();
+console.log(state.currentStep?.title);
+```
+
+`tutorial.goTo()` only updates the active index. It does not resolve the Promise returned by `tutorial.open()` and does not invoke `onPrevStep` or `onNextStep`.
 
 ## Tutorial options
 

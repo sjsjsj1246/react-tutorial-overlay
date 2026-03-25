@@ -12,7 +12,7 @@ A React library for step-by-step product tutorials with an imperative overlay AP
 
 - ✨ step-by-step tutorial overlay
 - 🎯 highlight one or more DOM targets per step
-- 🕹 imperative controls via `tutorial.open()`, `next()`, `prev()`, and `close()`
+- 🕹 imperative controls via `tutorial.open()`, `next()`, `prev()`, `goTo()`, `getState()`, and `close()`
 - ⏳ await tutorial completion with a small Promise result payload
 - 📦 minimal setup with a single `<TutorialOverlay />` mount
 
@@ -94,6 +94,28 @@ const App = () => {
 - `skipped`: the user clicked the built-in `건너뛰기` button.
 - `closed`: the tutorial was closed externally, such as `tutorial.close()`, `Escape`, backdrop click, or opening a new tutorial while another promise is still pending.
 
+To start from a specific step, pass `startAt` to `tutorial.open()`:
+
+```jsx
+await tutorial.open({
+  steps,
+  startAt: 1,
+});
+```
+
+Use `tutorial.goTo(index)` to move the active tutorial to a specific step. The index is clamped to the available range, and calling it while the overlay is closed is a no-op. `goTo()` only changes the active step. It does not resolve the pending Promise and does not trigger `onPrevStep` or `onNextStep`.
+
+Use `tutorial.getState()` when you need a read-only snapshot for external controls:
+
+```jsx
+const state = tutorial.getState();
+
+console.log(state.open);
+console.log(state.index);
+console.log(state.stepCount);
+console.log(state.currentStep?.title);
+```
+
 `content` is rendered as a plain string. HTML markup in the string is not interpreted.
 
 `highLightPadding` expands the highlight frame around the target element. It defaults to `8` pixels and applies to the rendered highlight box as well as the info box anchor position.
@@ -118,7 +140,7 @@ For accessibility, the info box is exposed as a labeled `dialog`. When the tutor
 
 `options.onClose` still runs whenever the tutorial closes. Use the returned Promise when you need async flow control after the tutorial ends.
 
-Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options })` from any event handler or effect.
+Mount `<TutorialOverlay />` once near the root of your app, then trigger `tutorial.open({ steps, options, startAt })` from any event handler or effect.
 
 ## Documentation
 
